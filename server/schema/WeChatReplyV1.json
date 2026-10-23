@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WeChatReplyV1",
+  "type": "object",
+  "required": ["contact_name", "reply_text"],
+  "properties": {
+    "contact_name": { "type": "string" },
+    "reply_text": { "type": "string" },
+    "audit_rows": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "additionalProperties": true
+}

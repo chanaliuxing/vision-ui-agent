@@ -1,0 +1,104 @@
+{
+  "name": "Indeed.ca Job 10-Click Demo (Precise IDs)",
+  "description": "Uses specific, hardcoded IDs to click the first 10 jobs, extract their descriptions, and then scroll.",
+  "start": "open_indeed",
+  "states": {
+    "open_indeed": {
+      "description": "Wake up Chrome, open Indeed.ca homepage, and wait for it to settle.",
+      "actions": [
+        { "do": "open_url", "url": "about:blank", "app": "Google Chrome" },
+        { "do": "sleep_ms", "value": 800 },
+        { "do": "ext.open_url", "url": "https://ca.indeed.com/", "active": true },
+        { "do": "wait_for", "until": { "type": "ext.wait_quiet", "timeout_ms": 15000 } }
+      ],
+      "on_success": "click_job_1"
+    },
+    "click_job_1": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_ef61a8ab70567358" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_1"
+    },
+    "extract_desc_1": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_2"
+    },
+    "click_job_2": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_524976cd0d1820de" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_2"
+    },
+    "extract_desc_2": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_3"
+    },
+    "click_job_3": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_a95a47cfcd8db5e5" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_3"
+    },
+    "extract_desc_3": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_4"
+    },
+    "click_job_4": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_1a99ec2a1c86c959" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_4"
+    },
+    "extract_desc_4": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_5"
+    },
+    "click_job_5": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_5c4cb925385a8f68" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_5"
+    },
+    "extract_desc_5": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_6"
+    },
+    "click_job_6": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_2ba0ad1038b4eb6c" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_6"
+    },
+    "extract_desc_6": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_7"
+    },
+    "click_job_7": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_987ce5a4e824a535" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_7"
+    },
+    "extract_desc_7": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_8"
+    },
+    "click_job_8": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_07defbcecc9a9c1d" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_8"
+    },
+    "extract_desc_8": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_9"
+    },
+    "click_job_9": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_c1cf6d6b50764db1" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_9"
+    },
+    "extract_desc_9": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "click_job_10"
+    },
+    "click_job_10": {
+      "actions": [ { "do": "ext.click_selector", "sel": "#sj_348c49872647e847" }, { "do": "wait_for", "until": { "type": "ext.wait_quiet" } } ],
+      "on_success": "extract_desc_10"
+    },
+    "extract_desc_10": {
+      "actions": [ { "do": "ext.extract", "args": { "selector": "#jobDescriptionText" } } ],
+      "on_success": "scroll_down"
+    },
+    "scroll_down": {
+      "description": "Scroll down the page to load more jobs.",
+      "actions": [
+        { "do": "scroll", "clicks": -1200 }
+      ],
+      "on_success": null
+    }
+  }
+}

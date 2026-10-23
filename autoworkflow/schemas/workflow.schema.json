@@ -1,0 +1,191 @@
+{
+  "$id": "workflow.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AutoWorkflow Schema",
+  "description": "Schema-first workflow definition for AI generation + visual configuration",
+  "type": "object",
+  "required": ["name", "version", "start", "steps"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Workflow name",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "Workflow description"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "globals": {
+      "type": "object",
+      "properties": {
+        "device_target": {
+          "enum": ["windows", "mac", "android", "ios", "web"],
+          "description": "Target device platform"
+        },
+        "defaults": {
+          "type": "object",
+          "description": "Default parameter values"
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "enum": ["camera", "clipboard", "screenread", "filesystem", "network", "microphone"]
+          },
+          "description": "Required permissions"
+        },
+        "llm_budget": {
+          "type": "object",
+          "properties": {
+            "max_calls": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "description": "LLM usage budget"
+        },
+        "auto_promote_on_success": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-promote workflow on successful runs"
+        }
+      }
+    },
+    "variables": {
+      "type": "object",
+      "description": "Workflow variables with initial values"
+    },
+    "start": {
+      "type": "string",
+      "description": "Starting step ID"
+    },
+    "steps": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/Step"},
+      "minItems": 1
+    },
+    "edges": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/Edge"},
+      "description": "Flow control edges between steps"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "created_at": {"type": "string", "format": "date-time"},
+        "created_by": {"type": "string"},
+        "updated_at": {"type": "string", "format": "date-time"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "category": {"type": "string"}
+      }
+    }
+  },
+  "definitions": {
+    "Step": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique step identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable step name"
+        },
+        "type": {
+          "enum": ["action", "branch", "loop", "parallel", "wait", "subflow", "human_input"],
+          "description": "Step type"
+        },
+        "uses": {
+          "type": "string",
+          "description": "Action ID from registry (e.g. ext.open_url, vision.find_element)"
+        },
+        "params": {
+          "type": "object",
+          "description": "Step parameters (validated against action schema)"
+        },
+        "when": {
+          "type": "string",
+          "description": "Condition expression using ${vars.*} syntax"
+        },
+        "retry": {
+          "type": "object",
+          "properties": {
+            "times": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "backoff_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "on_failure": {
+              "enum": ["fail", "skip", "continue"]
+            }
+          }
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 300000
+        },
+        "on_error": {
+          "enum": ["fail", "skip", "goto"],
+          "default": "fail"
+        },
+        "goto": {
+          "type": "string",
+          "description": "Target step ID for goto on error"
+        },
+        "outputs": {
+          "type": "object",
+          "description": "Step output variables"
+        },
+        "position": {
+          "type": "object",
+          "properties": {
+            "x": {"type": "number"},
+            "y": {"type": "number"}
+          },
+          "description": "Visual position in DAG editor"
+        }
+      }
+    },
+    "Edge": {
+      "type": "object",
+      "required": ["from", "to"],
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Source step ID"
+        },
+        "to": {
+          "type": "string",
+          "description": "Target step ID"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Edge activation condition"
+        },
+        "label": {
+          "type": "string",
+          "description": "Edge label for visualization"
+        }
+      }
+    }
+  }
+}

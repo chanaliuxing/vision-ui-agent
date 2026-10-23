@@ -1,0 +1,38 @@
+# Core
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.0
+
+# YOLO
+ultralytics==8.3.0
+opencv-python-headless==4.9.0.80
+numpy==1.26.4
+Pillow==10.3.0
+
+# Transformers & Torch
+torch==2.2.2
+torchvision==0.17.2
+transformers==4.41.2
+sentencepiece==0.2.0
+huggingface_hub==0.23.2
+
+# OCR
+easyocr==1.7.1
+
+# Optional utilities
+requests==2.31.0
+python-multipart==0.0.9
+pyautogui==0.9.54
+rich==13.7.1
+structlog>=24.1.0
+python-dotenv>=1.0.1
+
+# WeChat integration
+aiohttp==3.9.3
+
+# Telegram integration
+telethon==1.36.0
+
+# Image analysis for vision utilities
+imagehash==4.3.1
+scikit-image==0.22.0

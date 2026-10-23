@@ -1,0 +1,1 @@
+# Observability module with events, monitoring, and replay capabilities

@@ -1,0 +1,196 @@
+{
+  "name": "XHS Lulu Girl Real Automation Test",
+  "description": "Real test with PyAutoGUI automation - open page, search, and extract data",
+  "start": "open_browser",
+  "llm_provider": "gemini",
+  "llm_model": "gemini-1.5-flash",
+  "states": {
+    "open_browser": {
+      "description": "Open xiaohongshu.com in browser using PyAutoGUI",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot and then use PyAutoGUI to open a web browser and navigate to xiaohongshu.com. Look for browser icons or use keyboard shortcuts.",
+            "use_pyautogui": true,
+            "click_after_find": true,
+            "wait_after": 5000
+          },
+          "description": "Use PyAutoGUI to open browser and navigate"
+        }
+      ],
+      "on_success": "wait_page_load"
+    },
+
+    "wait_page_load": {
+      "description": "Wait for xiaohongshu.com to load completely",
+      "actions": [
+        {
+          "do": "wait_for",
+          "args": {
+            "condition": "page_stable",
+            "timeout_ms": 15000
+          },
+          "description": "Wait for page to fully load"
+        },
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot to see if xiaohongshu.com has loaded. Look for the characteristic layout and elements.",
+            "save_overlay": true,
+            "verify_elements": ["search_input", "navigation", "content_area"]
+          },
+          "description": "Verify page has loaded correctly"
+        }
+      ],
+      "on_success": "find_search_input"
+    },
+
+    "find_search_input": {
+      "description": "Find and click the search input using YOLO+LLM+PyAutoGUI",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Find the search input box on xiaohongshu.com. It should be at the top of the page with placeholder text like '搜索' or '登录探索更多内容'. Use YOLO detection and then click it with PyAutoGUI.",
+            "target_class": "search_input",
+            "use_pyautogui": true,
+            "click_after_find": true,
+            "wait_after": 2000
+          },
+          "description": "YOLO detects search input, LLM identifies it, PyAutoGUI clicks"
+        }
+      ],
+      "on_success": "type_lulu_girl"
+    },
+
+    "type_lulu_girl": {
+      "description": "Type 'lulu girl' using PyAutoGUI",
+      "actions": [
+        {
+          "do": "type_text",
+          "args": {
+            "text": "lulu girl",
+            "use_pyautogui": true,
+            "clear_first": true,
+            "press_enter": true,
+            "typing_delay": 0.1
+          },
+          "description": "Use PyAutoGUI to type the search term"
+        }
+      ],
+      "on_success": "wait_search_results"
+    },
+
+    "wait_search_results": {
+      "description": "Wait for search results and detect posts",
+      "actions": [
+        {
+          "do": "wait_for",
+          "args": {
+            "condition": "page_change",
+            "timeout_ms": 15000
+          },
+          "description": "Wait for search results page"
+        },
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot of the search results page for 'lulu girl'. Detect all post/content items using YOLO. Look for post cards, images, and clickable content.",
+            "target_class": "post_item",
+            "save_overlay": true,
+            "min_detections": 3
+          },
+          "description": "Detect search result posts with YOLO"
+        }
+      ],
+      "on_success": "click_third_post"
+    },
+
+    "click_third_post": {
+      "description": "Find and click the third post using PyAutoGUI",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "From the YOLO-detected posts, identify the THIRD post in the search results (counting from top-left, then left to right). Click on it using PyAutoGUI.",
+            "target_index": 3,
+            "use_pyautogui": true,
+            "click_after_find": true,
+            "wait_after": 5000
+          },
+          "description": "Click third post with PyAutoGUI"
+        }
+      ],
+      "on_success": "extract_creator"
+    },
+
+    "extract_creator": {
+      "description": "Extract creator information from the post page",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot of the post detail page and extract the creator/author information. Find the creator name, profile link, and any other visible details.",
+            "extract_data": {
+              "creator_name": "Find the author/creator name",
+              "profile_url": "Find link to creator profile",
+              "post_title": "Find post title or description",
+              "engagement": "Find likes, comments, shares count"
+            },
+            "save_extraction": true
+          },
+          "description": "Extract creator data using vision analysis"
+        }
+      ],
+      "on_success": "save_results"
+    },
+
+    "save_results": {
+      "description": "Save the extracted data",
+      "actions": [
+        {
+          "do": "save_text",
+          "args": {
+            "path": "xhs/lulu_girl_third_creator_real.txt",
+            "include_timestamp": true,
+            "include_metadata": true
+          },
+          "description": "Save creator info to text file"
+        },
+        {
+          "do": "capture_final_screenshot",
+          "args": {
+            "path": "xhs/final_result_page.png",
+            "full_page": true
+          },
+          "description": "Take final screenshot of the result"
+        }
+      ]
+    }
+  },
+
+  "metadata": {
+    "created_at": "2025-09-11",
+    "workflow_type": "real_automation_test",
+    "target_site": "xiaohongshu.com",
+    "search_query": "lulu girl",
+    "automation_tools": ["YOLO", "LLM", "PyAutoGUI"],
+    "expected_artifacts": [
+      "out/screens/overlay.png",
+      "out/logs/yolo.json",
+      "xhs/lulu_girl_third_creator_real.txt",
+      "xhs/final_result_page.png"
+    ],
+    "estimated_duration_seconds": 180,
+    "requires_real_automation": true,
+    "test_objectives": [
+      "Verify PyAutoGUI can open browser",
+      "Test real page navigation to xiaohongshu.com",
+      "Validate YOLO detection on real page",
+      "Confirm LLM decision making works",
+      "Extract real creator data",
+      "Save actual results to files"
+    ]
+  }
+}

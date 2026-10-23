@@ -1,0 +1,28 @@
+{
+  "name": "LP Poller (SQS)",
+  "meta": { "priority": "LOW" },
+  "start": "poll",
+  "vars": { "tick": 0 },
+  "states": {
+    "poll": {
+      "actions": [
+        { "do": "demo.fake_red_dot", "save": "rd" },
+        { "do": "branch", "if": "rd['has_red'] == True", "then": "publish_hp", "else": "sleep" }
+      ],
+      "transitions": [
+        { "if": "rd['has_red'] == True", "go_to": "publish_hp" },
+        { "go_to": "sleep" }
+      ]
+    },
+    "sleep": {
+      "actions": [ { "do": "set_variable", "name": "noop", "value": 0 } ],
+      "transitions": [ { "go_to": "poll" } ]
+    },
+    "publish_hp": {
+      "actions": [
+        { "do": "mq.publish", "topic": "device-demo-hp.fifo", "payload": { "contact": "Alice", "text": "新消息..." } }
+      ],
+      "transitions": [ { "go_to": "poll" } ]
+    }
+  }
+}

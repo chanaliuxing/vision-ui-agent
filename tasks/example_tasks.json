@@ -1,0 +1,222 @@
+[
+  {
+    "name": "wechat.send_message",
+    "version": "1.0.0",
+    "title": "向当前会话发送文本",
+    "description": "点击会话 → 聚焦输入框 → 发送文本 → 轻等待",
+    "tags": ["wechat", "desktop", "messaging"],
+    "inputs": {
+      "user_anchor": {"type": "string", "description": "@contact_bbox 等"},
+      "text": {"type": "string", "description": "要发送的文本"},
+      "timeout_ms": {"type": "integer", "default": 8000}
+    },
+    "outputs": {
+      "ok": {"type": "boolean"},
+      "meta": {"type": "object"}
+    },
+    "preconditions": [
+      "app:WeChat.front",
+      "anchor:chat_input_ready"
+    ],
+    "postconditions": [
+      "ocr:chat_view_contains(@text)"
+    ],
+    "policy": {
+      "retries": 1,
+      "retry_backoff_ms": 400,
+      "idempotency_key": "wx:send:@text:@user_anchor",
+      "max_runtime_ms": 8000
+    },
+    "impl": {
+      "steps": [
+        {
+          "do": "instr.click",
+          "target": {"bbox_var": "@user_anchor"}
+        },
+        {
+          "do": "instr.type_text",
+          "target": {"bbox_var": "@chat_input_bbox"},
+          "text": "@text"
+        },
+        {
+          "do": "instr.key",
+          "key": "Enter"
+        },
+        {
+          "do": "instr.wait",
+          "ms": 300
+        }
+      ]
+    }
+  },
+
+  {
+    "name": "indeed.apply_current",
+    "version": "1.0.0",
+    "title": "申请当前Job",
+    "description": "点击左列第i个职位 → 点击Apply按钮",
+    "tags": ["indeed", "web", "job", "automation"],
+    "inputs": {
+      "i": {"type": "integer", "default": 0, "description": "左列职位索引"}
+    },
+    "outputs": {
+      "ok": {"type": "boolean"},
+      "applied_job": {"type": "string"}
+    },
+    "preconditions": [
+      "host:indeed.com",
+      "ps:left_list_ready"
+    ],
+    "postconditions": [
+      "dom:text_any_of('Apply','Quick Apply') visible"
+    ],
+    "policy": {
+      "retries": 1,
+      "max_runtime_ms": 12000
+    },
+    "impl": {
+      "macro": "apply_click_flow",
+      "args": {
+        "index_offset": "@i"
+      }
+    }
+  },
+
+  {
+    "name": "xhs.expand_and_read_comments",
+    "version": "1.0.0",
+    "title": "展开并读取小红书评论",
+    "description": "展开评论区 → 滚动到底部 → 提取所有评论",
+    "tags": ["xiaohongshu", "web", "social", "content"],
+    "inputs": {},
+    "outputs": {
+      "comments": {"type": "array", "description": "提取的评论列表"}
+    },
+    "preconditions": [
+      "host:xiaohongshu.com"
+    ],
+    "postconditions": [],
+    "policy": {
+      "retries": 1,
+      "max_runtime_ms": 15000
+    },
+    "impl": {
+      "steps": [
+        {
+          "do": "instr.click",
+          "target": {"role": "button", "text": "展开评论"}
+        },
+        {
+          "do": "instr.scroll",
+          "dir": "down",
+          "amount": 800,
+          "target": {"css": "div.comment-pane"}
+        },
+        {
+          "do": "instr.wait",
+          "ms": 400
+        },
+        {
+          "do": "instr.read",
+          "target": {"css": "div.comment-pane"},
+          "fields": ["texts"],
+          "save": "comments"
+        }
+      ]
+    }
+  },
+
+  {
+    "name": "web.generic_login",
+    "version": "1.0.0",
+    "title": "通用网页登录",
+    "description": "通用的用户名密码登录流程",
+    "tags": ["web", "login", "generic"],
+    "inputs": {
+      "username": {"type": "string", "description": "用户名"},
+      "password": {"type": "string", "description": "密码"},
+      "username_selector": {"type": "string", "default": "input[name='username'], input[type='email']"},
+      "password_selector": {"type": "string", "default": "input[type='password']"},
+      "submit_selector": {"type": "string", "default": "button[type='submit'], input[type='submit']"}
+    },
+    "outputs": {
+      "ok": {"type": "boolean"},
+      "login_success": {"type": "boolean"}
+    },
+    "preconditions": [],
+    "postconditions": [],
+    "policy": {
+      "retries": 2,
+      "retry_backoff_ms": 1000,
+      "max_runtime_ms": 10000
+    },
+    "impl": {
+      "steps": [
+        {
+          "do": "instr.type_text",
+          "target": {"css": "@username_selector"},
+          "text": "@username",
+          "clear": true
+        },
+        {
+          "do": "instr.type_text",
+          "target": {"css": "@password_selector"},
+          "text": "@password",
+          "clear": true
+        },
+        {
+          "do": "instr.click",
+          "target": {"css": "@submit_selector"}
+        },
+        {
+          "do": "instr.wait",
+          "ms": 2000
+        }
+      ]
+    }
+  },
+
+  {
+    "name": "web.scroll_and_extract",
+    "version": "1.0.0",
+    "title": "滚动并提取内容",
+    "description": "在指定区域滚动并提取内容",
+    "tags": ["web", "scroll", "extract", "content"],
+    "inputs": {
+      "container_selector": {"type": "string", "default": "body"},
+      "scroll_times": {"type": "integer", "default": 3},
+      "scroll_amount": {"type": "integer", "default": 500},
+      "extract_selector": {"type": "string", "default": ".content, .post, .item"}
+    },
+    "outputs": {
+      "ok": {"type": "boolean"},
+      "extracted_content": {"type": "array"}
+    },
+    "preconditions": [],
+    "postconditions": [],
+    "policy": {
+      "retries": 1,
+      "max_runtime_ms": 20000
+    },
+    "impl": {
+      "steps": [
+        {
+          "do": "instr.scroll",
+          "dir": "down",
+          "amount": "@scroll_amount",
+          "target": {"css": "@container_selector"}
+        },
+        {
+          "do": "instr.wait",
+          "ms": 1000
+        },
+        {
+          "do": "instr.read",
+          "target": {"css": "@extract_selector"},
+          "fields": ["text", "href", "src"],
+          "save": "extracted_content"
+        }
+      ]
+    }
+  }
+]

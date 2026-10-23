@@ -1,0 +1,240 @@
+{
+  "version": "1.2",
+  "name": "Sprint H RAG + Reflexion Demo",
+  "description": "展示RAG轨迹检索和在线反思功能的示例工作流",
+  "start": "main_loop",
+  "features": {
+    "planner": {
+      "strategy": "agentq",
+      "memory": {
+        "rag": true,
+        "k": 5,
+        "use_reflexion": true,
+        "reward_threshold": 0.5
+      }
+    },
+    "humanize": {
+      "mouse": true,
+      "typing_delay": 100
+    }
+  },
+  "vars": {
+    "i": 0,
+    "goal": "apply current item",
+    "max_attempts": 3,
+    "current_attempt": 0
+  },
+  "states": {
+    "main_loop": {
+      "description": "主循环：获取页面状态 → 检索相似案例 → 规划执行 → 反思",
+      "actions": [
+        {
+          "do": "ext.get_pagestate",
+          "save": "ps",
+          "description": "获取当前页面状态"
+        },
+        {
+          "do": "mem.recall",
+          "goal": "@goal",
+          "fingerprint": "@fingerprint(@ps)",
+          "k": 5,
+          "min_reward": 0.5,
+          "since": "90d",
+          "save": "refs",
+          "description": "检索相似的历史成功轨迹"
+        },
+        {
+          "do": "llm.plan",
+          "strategy": "agentq",
+          "allowed_actions": [
+            "click_coordinates",
+            "wheel_coordinates",
+            "ext.extract",
+            "wait_for"
+          ],
+          "constraints": {
+            "max_steps": 5,
+            "no_dom_click": true,
+            "must_stay_in_host": "indeed.com"
+          },
+          "inputs": {
+            "page_state": "@ps",
+            "context": {
+              "i": "@i",
+              "goal": "@goal",
+              "attempt": "@current_attempt"
+            }
+          },
+          "references": "@refs",
+          "schema": "MicroPlanV1",
+          "save": "cands",
+          "description": "基于RAG引用生成计划候选"
+        },
+        {
+          "do": "plan.simulate",
+          "from": "@cands",
+          "page_state": "@ps",
+          "save": "choice",
+          "description": "模拟选择最佳计划"
+        },
+        {
+          "do": "plan.execute",
+          "from": "@choice['plan']",
+          "save": "res",
+          "description": "执行选定的计划"
+        },
+        {
+          "do": "plan.reflect",
+          "when": "@res['ok']==false || @res['reward'] < 0.5",
+          "max_len": 300,
+          "save": "reflection",
+          "description": "失败或低奖励时生成反思"
+        },
+        {
+          "do": "increment_variable",
+          "name": "current_attempt",
+          "description": "增加尝试次数"
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@res['ok']==true && @res['reward'] >= 0.8",
+          "go_to": "success",
+          "description": "成功且高奖励"
+        },
+        {
+          "if": "@current_attempt < @max_attempts",
+          "go_to": "retry_with_fallback",
+          "description": "重试机会仍然存在"
+        },
+        {
+          "else_go_to": "final_fallback",
+          "description": "达到最大重试次数"
+        }
+      ]
+    },
+
+    "retry_with_fallback": {
+      "description": "重试前的回退策略",
+      "actions": [
+        {
+          "do": "wheel_coordinates",
+          "at_bbox": "@ps['panes']['left']['rect']",
+          "amount": -600,
+          "description": "向上滚动重新定位"
+        },
+        {
+          "do": "sleep_ms",
+          "value": 800,
+          "description": "等待页面稳定"
+        }
+      ],
+      "on_success": "main_loop"
+    },
+
+    "final_fallback": {
+      "description": "最终回退：手动干预或更保守的策略",
+      "actions": [
+        {
+          "do": "ext.extract",
+          "mode": "find_button_bbox",
+          "text_any_of": ["Apply", "Quick Apply", "立即申请"],
+          "save": "manual_apply",
+          "description": "手动查找申请按钮"
+        },
+        {
+          "do": "click_coordinates",
+          "bbox": "@manual_apply['bbox']",
+          "when": "@manual_apply['found']",
+          "save": "manual_result",
+          "description": "点击手动找到的按钮"
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@manual_result['ok']==true",
+          "go_to": "success"
+        },
+        {
+          "else_go_to": "failure"
+        }
+      ]
+    },
+
+    "success": {
+      "description": "成功完成任务",
+      "actions": [
+        {
+          "do": "log_event",
+          "event": "workflow.success",
+          "data": {
+            "goal": "@goal",
+            "attempts": "@current_attempt",
+            "final_reward": "@res['reward']",
+            "used_rag": "@refs.length > 0",
+            "had_reflection": "@reflection != null"
+          }
+        },
+        {
+          "do": "increment_variable",
+          "name": "i",
+          "description": "处理下一项"
+        }
+      ],
+      "on_success": "main_loop"
+    },
+
+    "failure": {
+      "description": "任务失败",
+      "actions": [
+        {
+          "do": "log_event",
+          "event": "workflow.failure",
+          "data": {
+            "goal": "@goal",
+            "attempts": "@current_attempt",
+            "last_error": "@res['error']",
+            "reflection": "@reflection['critique']"
+          }
+        },
+        {
+          "do": "plan.reflect",
+          "max_len": 500,
+          "save": "final_reflection",
+          "description": "最终失败反思"
+        },
+        {
+          "do": "increment_variable",
+          "name": "i",
+          "description": "跳过当前项，处理下一项"
+        }
+      ],
+      "on_success": "main_loop"
+    }
+  },
+
+  "error_handling": {
+    "global_timeout": 300000,
+    "step_timeout": 30000,
+    "on_error": "final_fallback"
+  },
+
+  "metadata": {
+    "sprint": "H",
+    "features_used": [
+      "RAG轨迹检索",
+      "在线反思",
+      "AgentQ规划",
+      "多候选模拟"
+    ],
+    "target_sites": [
+      "ca.indeed.com",
+      "www.xiaohongshu.com"
+    ],
+    "success_metrics": {
+      "target_success_rate": 0.85,
+      "max_steps_per_task": 8,
+      "avg_reward_threshold": 0.7
+    }
+  }
+}

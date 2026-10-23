@@ -1,0 +1,8 @@
+{
+  "click_padding_px": -6,
+  "conf_min": 0.5,
+  "retry": 2,
+  "poll_interval_s": 0.6,
+  "wait_timeout_s": 8
+}
+

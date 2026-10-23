@@ -1,0 +1,53 @@
+{
+  "id": "vision.find_element",
+  "title": "Find element with vision",
+  "description": "Uses computer vision to locate UI elements on screen",
+  "schema": {
+    "type": "object",
+    "required": ["description"],
+    "properties": {
+      "description": {
+        "type": "string",
+        "description": "Natural language description of element to find"
+      },
+      "image_template": {
+        "type": "string",
+        "format": "uri",
+        "description": "Optional template image for matching"
+      },
+      "confidence_threshold": {
+        "type": "number",
+        "minimum": 0.1,
+        "maximum": 1.0,
+        "default": 0.8,
+        "description": "Minimum confidence for element detection"
+      },
+      "search_region": {
+        "type": "object",
+        "properties": {
+          "x": {"type": "integer", "minimum": 0},
+          "y": {"type": "integer", "minimum": 0},
+          "width": {"type": "integer", "minimum": 1},
+          "height": {"type": "integer", "minimum": 1}
+        },
+        "description": "Limit search to specific screen region"
+      },
+      "multiple": {
+        "type": "boolean",
+        "default": false,
+        "description": "Find all matching elements"
+      }
+    }
+  },
+  "capabilities": ["vision", "desktop"],
+  "prerequisites": [],
+  "cost_estimate": {
+    "llm_tokens": 150,
+    "api_calls": 1,
+    "execution_ms": 3000
+  },
+  "platforms": ["windows", "mac", "linux"],
+  "version": "1.0.0",
+  "author": "AutoWorkflow",
+  "tags": ["vision", "detection", "ui", "screen"]
+}

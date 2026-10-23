@@ -1,0 +1,116 @@
+# docker-compose.scaling.yml
+# Auto-scaling services for YOLO queue processing
+version: '3.8'
+
+services:
+  # Redis for SSE progress tracking
+  redis:
+    profiles: [scaling, dev-scaling]
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+  # KEDA for auto-scaling
+  keda:
+    profiles: [scaling, dev-scaling]
+    image: ghcr.io/kedacore/keda:2.12.0
+    command: keda --zap-log-level=info
+    ports:
+      - "8080:8080"  # Metrics server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - KEDA_HTTP_DEFAULT_TIMEOUT=3000
+
+  # Queue Worker Pool (will be auto-scaled by KEDA)
+  yolo-worker:
+    profiles: [scaling, dev-scaling]
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: python queue/worker.py
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - REDIS_URL=redis://redis:6379
+      - WORKER_ID=${HOSTNAME:-worker}
+      - LOG_LEVEL=INFO
+    depends_on:
+      redis:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    deploy:
+      replicas: 2  # Initial replicas, KEDA will scale 1-10
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+    labels:
+      - "keda.scaledobject=yolo-worker-scaler"
+
+  # Queue Service API
+  queue-api:
+    profiles: [scaling, dev-scaling]
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: uvicorn queue.queue_service:app --host 0.0.0.0 --port 8010
+    ports:
+      - "8010:8010"
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Progress API for SSE
+  progress-api:
+    profiles: [scaling, dev-scaling]
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: uvicorn api.progress_api:app --host 0.0.0.0 --port 8011
+    ports:
+      - "8011:8011"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8011/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    external: true
+    name: game-network

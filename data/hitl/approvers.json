@@ -1,0 +1,22 @@
+{
+  "admin": {
+    "name": "\u7cfb\u7edf\u7ba1\u7406\u5458",
+    "chat_id": "admin_chat",
+    "risk_levels": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "active": true
+  },
+  "supervisor": {
+    "name": "\u4e3b\u7ba1",
+    "chat_id": "supervisor_chat",
+    "risk_levels": [
+      "medium",
+      "high"
+    ],
+    "active": true
+  }
+}

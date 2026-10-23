@@ -1,0 +1,11 @@
+{
+  "$id": "llm.reply.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "llm.reply",
+  "type": "object",
+  "required": ["prompt"],
+  "properties": {
+    "prompt": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

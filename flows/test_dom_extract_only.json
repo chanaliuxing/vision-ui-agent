@@ -1,0 +1,14 @@
+{
+  "name": "Test DOM Extract Only",
+  "description": "Simple test to extract DOM and trigger reducer",
+  "start": "extract_dom",
+  "states": {
+    "extract_dom": {
+      "description": "Extract DOM from current page to test reducer",
+      "actions": [
+        { "do": "ext.extract", "args": { "want": "inputs", "limit": 50 }, "save": "dom_snapshot" }
+      ],
+      "on_success": null
+    }
+  }
+}

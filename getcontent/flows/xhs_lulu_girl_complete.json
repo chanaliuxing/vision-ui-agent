@@ -1,0 +1,251 @@
+{
+  "name": "XHS Lulu Girl Vision-First Complete Workflow",
+  "description": "Complete YOLO+LLM+Chrome Extension workflow to search 'lulu girl' and extract third post creator info",
+  "start": "screenshot_and_detect",
+  "llm_provider": "gemini",
+  "llm_model": "gemini-1.5-flash",
+  "vision_api": "http://127.0.0.1:8000",
+  "chrome_extension_enabled": true,
+  "states": {
+    "screenshot_and_detect": {
+      "description": "Take screenshot and use YOLO to detect UI elements",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot of the xiaohongshu.com page and detect all clickable UI elements using YOLO vision model",
+            "yolo_conf": 0.3,
+            "yolo_iou": 0.5,
+            "save_overlay": true
+          },
+          "verify": {
+            "check": "yolo_detections",
+            "min_objects": 5,
+            "timeout_ms": 10000
+          },
+          "description": "Capture screen and run YOLO object detection"
+        }
+      ],
+      "on_success": "find_search_input"
+    },
+
+    "find_search_input": {
+      "description": "Use YOLO+LLM to identify and click search input",
+      "actions": [
+        {
+          "do": "autostep", 
+          "args": {
+            "intent": "Find and click the search input box on xiaohongshu.com page. Look for text input, search box, or any input field where I can type search terms.",
+            "target_class": "search_input",
+            "llm_hint": "Look for input elements with placeholder text like '搜索', '登录探索', or any search-related text. The search box is usually at the top of the page.",
+            "click_after_find": true
+          },
+          "verify": {
+            "check": "element_clicked",
+            "timeout_ms": 8000
+          },
+          "description": "LLM identifies search input from YOLO detections and clicks it"
+        }
+      ],
+      "on_success": "type_search_term"
+    },
+
+    "type_search_term": {
+      "description": "Type 'lulu girl' in the search input",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Type 'lulu girl' in the currently focused search input and press Enter to search",
+            "text_to_type": "lulu girl",
+            "press_enter": true,
+            "clear_first": true
+          },
+          "verify": {
+            "check": "text_typed",
+            "expected_text": "lulu girl",
+            "timeout_ms": 5000
+          },
+          "description": "Type search term using Chrome extension"
+        }
+      ],
+      "on_success": "wait_for_results"
+    },
+
+    "wait_for_results": {
+      "description": "Wait for search results to load and detect them with YOLO",
+      "actions": [
+        {
+          "do": "wait_for",
+          "args": {
+            "condition": "page_change",
+            "timeout_ms": 15000
+          },
+          "description": "Wait for search results page to load"
+        },
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot of the search results page and identify all post/content items using YOLO vision model",
+            "yolo_conf": 0.25,
+            "target_class": "post_item",
+            "save_overlay": true
+          },
+          "verify": {
+            "check": "yolo_detections", 
+            "min_objects": 3,
+            "timeout_ms": 10000
+          },
+          "description": "Detect search result posts with YOLO"
+        }
+      ],
+      "on_success": "identify_third_post"
+    },
+
+    "identify_third_post": {
+      "description": "Use LLM to identify the third post from YOLO detections",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "From the YOLO-detected posts on the search results page, identify and click the THIRD post/content item. Count from top to bottom, left to right to find the third item.",
+            "target_index": 3,
+            "llm_hint": "Look for post cards, content items, or clickable elements that represent individual posts. The third one should be clicked.",
+            "click_after_find": true,
+            "wait_after": 3000
+          },
+          "verify": {
+            "check": "element_clicked",
+            "timeout_ms": 10000
+          },
+          "description": "LLM identifies and clicks third post"
+        }
+      ],
+      "on_success": "extract_creator_info"
+    },
+
+    "extract_creator_info": {
+      "description": "Extract creator information from the post page",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Extract the creator/author information from this xiaohongshu post page. Find the creator's name and profile URL.",
+            "extract_data": {
+              "creator_name": "Find author/creator name text",
+              "profile_url": "Find link to creator's profile page", 
+              "post_title": "Find the post title or content preview",
+              "follower_count": "Find follower/fans count if visible"
+            },
+            "save_extraction": true
+          },
+          "verify": {
+            "check": "data_extracted",
+            "required_fields": ["creator_name"],
+            "timeout_ms": 8000
+          },
+          "description": "Extract creator data using LLM vision analysis"
+        }
+      ],
+      "on_success": "save_results"
+    },
+
+    "save_results": {
+      "description": "Save extracted creator information",
+      "actions": [
+        {
+          "do": "save_text",
+          "args": {
+            "path": "xhs/lulu_girl_third_creator_info.txt",
+            "format": "structured",
+            "include_timestamp": true,
+            "include_metadata": true
+          },
+          "description": "Save creator info to text file"
+        },
+        {
+          "do": "save_json",
+          "args": {
+            "path": "xhs/lulu_girl_creator_data.json",
+            "include_workflow_info": true,
+            "include_yolo_stats": true
+          },
+          "description": "Save structured data as JSON"
+        },
+        {
+          "do": "generate_report",
+          "args": {
+            "path": "xhs/workflow_execution_report.html",
+            "include_screenshots": true,
+            "include_yolo_overlays": true,
+            "include_llm_decisions": true
+          },
+          "description": "Generate comprehensive HTML report"
+        }
+      ],
+      "on_success": "completion"
+    },
+
+    "completion": {
+      "description": "Workflow completion and verification",
+      "actions": [
+        {
+          "do": "verify_artifacts",
+          "args": {
+            "required_files": [
+              "xhs/lulu_girl_third_creator_info.txt",
+              "xhs/lulu_girl_creator_data.json",
+              "xhs/workflow_execution_report.html"
+            ],
+            "min_file_sizes": {
+              "txt": 50,
+              "json": 100,
+              "html": 500
+            }
+          },
+          "description": "Verify all artifacts were created successfully"
+        },
+        {
+          "do": "log_success",
+          "args": {
+            "message": "YOLO+LLM+Chrome Extension workflow completed successfully",
+            "include_stats": {
+              "yolo_detections": true,
+              "llm_decisions": true,
+              "execution_time": true,
+              "artifacts_created": true
+            }
+          },
+          "description": "Log successful completion with detailed stats"
+        }
+      ]
+    }
+  },
+
+  "metadata": {
+    "created_at": "2025-09-11",
+    "workflow_type": "vision_first_automation",
+    "target_site": "xiaohongshu.com",
+    "search_query": "lulu girl",
+    "target_post_index": 3,
+    "technology_stack": ["YOLO", "LLM", "Chrome Extension"],
+    "expected_artifacts": [
+      "out/screens/overlay.png",
+      "out/logs/yolo.json", 
+      "out/logs/llm_responses.json",
+      "xhs/lulu_girl_third_creator_info.txt",
+      "xhs/lulu_girl_creator_data.json",
+      "xhs/workflow_execution_report.html"
+    ],
+    "estimated_duration_seconds": 120,
+    "automation_approach": "vision_first_with_chrome_fallback",
+    "objectives": [
+      "Demonstrate YOLO object detection on web page",
+      "Show LLM decision-making from visual input", 
+      "Test Chrome extension integration",
+      "Extract specific creator information",
+      "Generate comprehensive artifacts and reports",
+      "Validate end-to-end vision-first automation"
+    ]
+  }
+}

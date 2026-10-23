@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "start": "find_button",
+  "steps": [
+    {
+      "id": "find_button",
+      "type": "action",
+      "uses": "vision.find_element_with_image_check",
+      "params": {
+        "anchor_image_id": "btn_123",
+        "method": "image",
+        "threshold": 0.8
+      }
+    },
+    {
+      "id": "click_button",
+      "type": "action",
+      "uses": "ext.click",
+      "params": {
+        "ref": "${outputs.find_button.center}"
+      }
+    },
+    {
+      "id": "extract_text",
+      "type": "action",
+      "uses": "ocr.extract_region",
+      "params": {
+        "ref": "${outputs.find_button.bbox}"
+      }
+    },
+    {
+      "id": "bad_reference",
+      "type": "action",
+      "uses": "ext.click",
+      "params": {
+        "ref": "${outputs.nonexistent_step.center}"
+      }
+    },
+    {
+      "id": "invalid_field_ref",
+      "type": "action",
+      "uses": "ext.click",
+      "params": {
+        "ref": "${outputs.find_button.invalid_field}"
+      }
+    }
+  ],
+  "edges": [
+    { "from": "find_button", "to": "click_button" },
+    { "from": "click_button", "to": "extract_text" },
+    { "from": "extract_text", "to": "bad_reference" },
+    { "from": "bad_reference", "to": "invalid_field_ref" }
+  ]
+}

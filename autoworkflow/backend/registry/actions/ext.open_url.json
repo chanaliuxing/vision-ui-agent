@@ -1,0 +1,43 @@
+{
+  "id": "ext.open_url",
+  "title": "Open URL in browser",
+  "description": "Opens a specified URL in the default or specified browser",
+  "schema": {
+    "type": "object",
+    "required": ["url", "app"],
+    "properties": {
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "URL to open"
+      },
+      "app": {
+        "enum": ["Google Chrome", "Edge", "Arc", "Firefox", "Safari", "default"],
+        "description": "Browser application to use"
+      },
+      "wait_dom_quiet_ms": {
+        "type": "integer",
+        "default": 800,
+        "minimum": 0,
+        "maximum": 10000,
+        "description": "Wait time for DOM to stabilize"
+      },
+      "incognito": {
+        "type": "boolean",
+        "default": false,
+        "description": "Open in incognito/private mode"
+      }
+    }
+  },
+  "capabilities": ["web"],
+  "prerequisites": [],
+  "cost_estimate": {
+    "llm_tokens": 0,
+    "api_calls": 0,
+    "execution_ms": 2000
+  },
+  "platforms": ["windows", "mac", "linux"],
+  "version": "1.0.0",
+  "author": "AutoWorkflow",
+  "tags": ["browser", "navigation", "web"]
+}

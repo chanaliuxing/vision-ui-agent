@@ -1,0 +1,77 @@
+name: indeed_coords
+version: 1.0.0
+engine_min: 1.2.0
+description: "Indeed坐标点击插件 - 提供精确的坐标点击和滚轮操作功能"
+author: "Workflow Engine Team"
+
+permissions:
+  hosts:
+    - "https://*.indeed.com"
+    - "https://*.indeed.co.uk"
+    - "https://*.indeed.ca"
+  capabilities:
+    - mouse
+    - screen
+    - ext_messaging
+
+actions:
+  - name: click_coordinates
+    entry: actions.py:click_coordinates
+    description: "点击指定坐标位置"
+    timeout_ms: 10000
+    schema:
+      type: object
+      required: ["bbox"]
+      properties:
+        bbox:
+          type: object
+          description: "目标矩形区域 (DOMRect格式)"
+          required: ["x", "y", "width", "height"]
+          properties:
+            x: { type: number }
+            y: { type: number }
+            width: { type: number }
+            height: { type: number }
+        trace_tag:
+          type: string
+          description: "追踪标签，用于日志和调试"
+        guard:
+          type: object
+          description: "安全防护配置"
+          properties:
+            source_vars_only:
+              type: boolean
+              default: false
+              description: "只允许来源于当前变量的坐标"
+            allowlist:
+              type: array
+              items: { type: string }
+              description: "允许的动作白名单"
+            denylist:
+              type: array
+              items: { type: string }
+              description: "禁止的动作黑名单"
+
+  - name: wheel_coordinates
+    entry: actions.py:wheel_coordinates
+    description: "在指定容器中心进行滚轮操作"
+    timeout_ms: 5000
+    schema:
+      type: object
+      required: ["at_bbox", "amount"]
+      properties:
+        at_bbox:
+          type: object
+          description: "容器矩形区域"
+          required: ["x", "y", "width", "height"]
+          properties:
+            x: { type: number }
+            y: { type: number }
+            width: { type: number }
+            height: { type: number }
+        amount:
+          type: integer
+          description: "滚动量 (正数向上，负数向下)"
+        trace_tag:
+          type: string
+          description: "追踪标签"

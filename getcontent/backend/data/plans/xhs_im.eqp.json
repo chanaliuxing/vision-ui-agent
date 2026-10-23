@@ -1,0 +1,43 @@
+{
+  "page_signature": {"host": "xhs.com", "path_hint": "/im"},
+  "goals": ["extract_incoming_messages"],
+  "frames": [
+    {
+      "when": {"url_includes": "xhs.com/im"},
+      "queries": [
+        {
+          "id": "chat",
+          "selector": {
+            "css": "main, #root, [role='main']",
+            "css_candidates": ["[role='main']", "main", "#root"]
+          },
+          "verify": {"min_count": 1}
+        },
+        {
+          "id": "bubbles",
+          "iterate": {
+            "within": "chat",
+            "item_css": "div.message, li.msg, [data-role='message']",
+            "filters": [
+              {"has_class_includes": ["incoming", "left", "other"]},
+              {"not_has_class": ["outgoing", "right", "me", "self"]}
+            ],
+            "fields": [
+              {"name": "text", "type": "innerText"},
+              {"name": "images", "type": "queryAttrAll", "css": "img", "attr": "src"},
+              {"name": "videos", "type": "queryAttrAll", "css": "video,source", "attr": "src"},
+              {"name": "ts", "type": "closestText", "hint": ["AM", "PM", "分钟", "昨天", "今天"]}
+            ],
+            "order_by": {"rule": "dom_order"},
+            "take": {"last_n": 5}
+          },
+          "verify": {"min_count": 1},
+          "fallback": [
+            {"use": "network_sniff", "pattern": "message|conversation"},
+            {"use": "vision_roi_ocr", "roi_hint": "chat"}
+          ]
+        }
+      ]
+    }
+  ]
+}

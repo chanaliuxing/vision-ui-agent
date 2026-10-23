@@ -1,0 +1,12 @@
+{
+  "window": {"x":0,"y":0,"w":1400,"h":900,"scale":1.0},
+  "left_list": {"x":80,"y":120,"w":280,"h":700},
+  "chat_area": {"x":380,"y":100,"w":900,"h":700},
+  "input_box": {"x":400,"y":820},
+  "anchors": {
+    "notification_dot": "config/anchors/slack/notification_dot.png"
+  },
+  "thresholds": {
+    "notification_dot": 0.8
+  }
+}

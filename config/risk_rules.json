@@ -1,0 +1,70 @@
+{
+  "rules": [
+    {
+      "rule_id": "sensitive_data_access",
+      "name": "\u654f\u611f\u6570\u636e\u8bbf\u95ee",
+      "description": "\u68c0\u6d4b\u8bbf\u95ee\u654f\u611f\u6570\u636e\u7684\u64cd\u4f5c",
+      "condition": "'password' in str(context).lower() or 'token' in str(context).lower() or 'api_key' in str(context).lower()",
+      "risk_level": "critical",
+      "approval_required": true,
+      "auto_reject": false,
+      "tags": [
+        "data",
+        "security"
+      ]
+    },
+    {
+      "rule_id": "high_volume_messages",
+      "name": "\u5927\u91cf\u6d88\u606f\u53d1\u9001",
+      "description": "\u68c0\u6d4b\u77ed\u65f6\u95f4\u5185\u53d1\u9001\u5927\u91cf\u6d88\u606f",
+      "condition": "context.get('message_count', 0) > 10",
+      "risk_level": "high",
+      "approval_required": true,
+      "auto_reject": false,
+      "tags": [
+        "messaging",
+        "volume"
+      ]
+    },
+    {
+      "rule_id": "external_url_access",
+      "name": "\u5916\u90e8URL\u8bbf\u95ee",
+      "description": "\u68c0\u6d4b\u8bbf\u95ee\u5916\u90e8URL\u7684\u64cd\u4f5c",
+      "condition": "'http' in str(context).lower() and 'external' in str(context).lower()",
+      "risk_level": "medium",
+      "approval_required": true,
+      "auto_reject": false,
+      "tags": [
+        "network",
+        "external"
+      ]
+    },
+    {
+      "rule_id": "file_operation",
+      "name": "\u6587\u4ef6\u64cd\u4f5c",
+      "description": "\u68c0\u6d4b\u6587\u4ef6\u8bfb\u5199\u64cd\u4f5c",
+      "condition": "any(op in str(context).lower() for op in ['file_read', 'file_write', 'file_delete'])",
+      "risk_level": "medium",
+      "approval_required": true,
+      "auto_reject": false,
+      "tags": [
+        "file",
+        "system"
+      ]
+    },
+    {
+      "rule_id": "system_command",
+      "name": "\u7cfb\u7edf\u547d\u4ee4\u6267\u884c",
+      "description": "\u68c0\u6d4b\u7cfb\u7edf\u547d\u4ee4\u6267\u884c",
+      "condition": "'command' in context and 'system' in str(context).lower()",
+      "risk_level": "critical",
+      "approval_required": true,
+      "auto_reject": true,
+      "tags": [
+        "system",
+        "command"
+      ]
+    }
+  ],
+  "updated_at": "2025-09-17T07:09:01.368084"
+}

@@ -1,0 +1,76 @@
+# config/traefik/traefik.yml
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+api:
+  dashboard: true
+  insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: game-network
+
+# 访问日志
+accessLog:
+  format: json
+  filePath: "/var/log/traefik/access.log"
+
+# Traefik日志
+log:
+  level: INFO
+  format: json
+
+# 健康检查端点
+ping:
+  entryPoint: "web"
+
+# CORS中间件
+http:
+  middlewares:
+    cors:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+          - POST
+          - DELETE
+        accessControlAllowOriginList:
+          - "*"
+        accessControlAllowHeaders:
+          - "*"
+        accessControlExposeHeaders:
+          - "*"
+        accessControlMaxAge: 100
+        addVaryHeader: true
+
+    # 安全头
+    security:
+      headers:
+        frameDeny: true
+        sslRedirect: false
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: false
+        stsIncludeSubdomains: false
+        stsPreload: false
+        stsSeconds: 31536000
+
+# 全局路由规则
+  routers:
+    # API统一入口
+    api-router:
+      rule: "PathPrefix(`/api`)"
+      middlewares:
+        - cors
+        - security
+      service: "noop@internal"
+      priority: 1

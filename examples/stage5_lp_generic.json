@@ -1,0 +1,62 @@
+{
+  "name": "Chat Poller (LP - Generic)",
+  "meta": { "priority": "LOW", "resource_lock": "CHAT_UI_${app}" },
+  "start": "poll",
+  "vars": { "app": "wechat", "device_id": "demo" },
+  "states": {
+    "poll": {
+      "actions": [
+        { "do": "chat.find_unread", "save": "ur" }
+      ],
+      "transitions": [
+        { "if": "@ur['has_unread'] == True", "go_to": "open" },
+        { "go_to": "sleep" }
+      ]
+    },
+    "sleep": {
+      "actions": [
+        { "do": "wait_ms", "value": 1500 }
+      ],
+      "transitions": [
+        { "go_to": "poll" }
+      ]
+    },
+    "open": {
+      "actions": [
+        { "do": "chat.open_latest_unread" },
+        { "do": "wait_ms", "value": 300 },
+        { "do": "chat.capture_visible", "save": "cap" }
+      ],
+      "transitions": [
+        { "go_to": "ocr_loop" }
+      ]
+    },
+    "ocr_loop": {
+      "actions": [
+        { "do": "chat.ocr_fetch", "job": "@cap['ocr_job']", "save": "ocr" }
+      ],
+      "transitions": [
+        { "if": "@ocr['done'] == True", "go_to": "post_ocr" },
+        { "go_to": "ocr_loop" }
+      ]
+    },
+    "post_ocr": {
+      "actions": [
+        { "do": "api.ingest_event", "event": "chat_visible_ocr", "payload": "@ocr" },
+        {
+          "do": "llm.submit",
+          "job": "chat_reply",
+          "prompt_pack": "wechat.sales.reply.v1",
+          "schema": "WeChatReplyV1",
+          "provider_hint": "mock",
+          "inputs": { "new_messages_text": "@ocr['text']" },
+          "device_target": "@device_id",
+          "job_id": "chat_reply_@device_id_@app"
+        }
+      ],
+      "transitions": [
+        { "go_to": "poll" }
+      ]
+    }
+  }
+}

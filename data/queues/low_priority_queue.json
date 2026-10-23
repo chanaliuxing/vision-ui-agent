@@ -1,0 +1,113 @@
+{
+  "messages": {
+    "26741126-43cb-4752-9f50-e147b9e0fba3": {
+      "message_id": "26741126-43cb-4752-9f50-e147b9e0fba3",
+      "content": {
+        "task_id": "lp_0",
+        "task_type": "low_priority"
+      },
+      "priority": 2,
+      "queue_name": "low_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:23:31.608094",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "25c8e074-2e12-4584-8e74-20e9f2b203d9": {
+      "message_id": "25c8e074-2e12-4584-8e74-20e9f2b203d9",
+      "content": {
+        "task_id": "lp_1",
+        "task_type": "low_priority"
+      },
+      "priority": 2,
+      "queue_name": "low_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:23:31.608352",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "e90230ba-7cb8-49af-8bcc-6b9f3fb4411d": {
+      "message_id": "e90230ba-7cb8-49af-8bcc-6b9f3fb4411d",
+      "content": {
+        "task_id": "lp_2",
+        "task_type": "low_priority"
+      },
+      "priority": 2,
+      "queue_name": "low_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:23:31.608519",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "d48f3907-e9c1-4f59-9da2-9784e69bbb54": {
+      "message_id": "d48f3907-e9c1-4f59-9da2-9784e69bbb54",
+      "content": {
+        "priority": "low",
+        "task_type": "low_priority"
+      },
+      "priority": 2,
+      "queue_name": "low_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:09.935915",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "7da7dbbe-668e-4ff0-8af0-7d5f33312226": {
+      "message_id": "7da7dbbe-668e-4ff0-8af0-7d5f33312226",
+      "content": {
+        "test": "lp",
+        "task_type": "low_priority"
+      },
+      "priority": 2,
+      "queue_name": "low_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:23.116029",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    }
+  },
+  "pending_queues": {
+    "NORMAL": [
+      "26741126-43cb-4752-9f50-e147b9e0fba3",
+      "25c8e074-2e12-4584-8e74-20e9f2b203d9",
+      "e90230ba-7cb8-49af-8bcc-6b9f3fb4411d",
+      "d48f3907-e9c1-4f59-9da2-9784e69bbb54",
+      "7da7dbbe-668e-4ff0-8af0-7d5f33312226"
+    ]
+  },
+  "group_queues": {},
+  "group_processing": {},
+  "dedup_cache": {},
+  "dedup_ttl": {},
+  "saved_at": "2025-09-17T01:24:23.116105"
+}

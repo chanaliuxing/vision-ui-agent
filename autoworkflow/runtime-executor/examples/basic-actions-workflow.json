@@ -1,0 +1,286 @@
+{
+  "name": "Basic Actions Demo Workflow",
+  "version": "1.0.0",
+  "description": "Demonstrates all basic actions from addbasiActions.md: clipboard, mouse, keyboard, window, system, and file operations",
+  "start": "step1",
+  "steps": [
+    {
+      "id": "step1",
+      "name": "Save current clipboard state",
+      "type": "action",
+      "uses": "ext.clipboard_push",
+      "params": {}
+    },
+    {
+      "id": "step2",
+      "name": "Clear clipboard for clean start",
+      "type": "action",
+      "uses": "ext.clipboard_clear",
+      "params": {}
+    },
+    {
+      "id": "step3",
+      "name": "Set clipboard content",
+      "type": "action",
+      "uses": "ext.clipboard_set",
+      "params": {
+        "content": "AutoWorkflow Basic Actions Test"
+      }
+    },
+    {
+      "id": "step4",
+      "name": "Get clipboard content",
+      "type": "action",
+      "uses": "ext.clipboard_get",
+      "params": {}
+    },
+    {
+      "id": "step5",
+      "name": "Triple-click demonstration",
+      "type": "action",
+      "uses": "ext.mouse_triple_click",
+      "params": {
+        "coordinates": {"x": 400, "y": 300},
+        "interval_ms": 120
+      }
+    },
+    {
+      "id": "step6",
+      "name": "Right-click context menu",
+      "type": "action",
+      "uses": "ext.mouse_right_click",
+      "params": {
+        "coordinates": {"x": 500, "y": 350}
+      }
+    },
+    {
+      "id": "step7",
+      "name": "Middle-click test",
+      "type": "action",
+      "uses": "ext.mouse_middle_click",
+      "params": {
+        "coordinates": {"x": 450, "y": 320}
+      }
+    },
+    {
+      "id": "step8",
+      "name": "Mouse wheel scroll",
+      "type": "action",
+      "uses": "ext.mouse_wheel",
+      "params": {
+        "options": {
+          "deltaY": -240,
+          "deltaX": 0
+        }
+      }
+    },
+    {
+      "id": "step9",
+      "name": "Mouse move only (no click)",
+      "type": "action",
+      "uses": "ext.mouse_move_only",
+      "params": {
+        "coordinates": {"x": 600, "y": 400},
+        "duration_ms": 500
+      }
+    },
+    {
+      "id": "step10",
+      "name": "Key down test",
+      "type": "action",
+      "uses": "ext.key_down",
+      "params": {
+        "key": "shift"
+      }
+    },
+    {
+      "id": "step11",
+      "name": "Key up test",
+      "type": "action",
+      "uses": "ext.key_up",
+      "params": {
+        "key": "shift"
+      }
+    },
+    {
+      "id": "step12",
+      "name": "Select all text",
+      "type": "action",
+      "uses": "ext.key_select_all",
+      "params": {}
+    },
+    {
+      "id": "step13",
+      "name": "Copy selected text",
+      "type": "action",
+      "uses": "ext.key_copy",
+      "params": {}
+    },
+    {
+      "id": "step14",
+      "name": "Cut text",
+      "type": "action",
+      "uses": "ext.key_cut",
+      "params": {}
+    },
+    {
+      "id": "step15",
+      "name": "Paste text",
+      "type": "action",
+      "uses": "ext.key_paste",
+      "params": {}
+    },
+    {
+      "id": "step16",
+      "name": "Toggle IME",
+      "type": "action",
+      "uses": "ext.key_toggle_ime",
+      "params": {}
+    },
+    {
+      "id": "step17",
+      "name": "Execute shell command",
+      "type": "action",
+      "uses": "ext.os_shell",
+      "params": {
+        "command": "echo 'Hello from AutoWorkflow'",
+        "timeout": 5,
+        "shell": true
+      }
+    },
+    {
+      "id": "step18",
+      "name": "Create test directory",
+      "type": "action",
+      "uses": "ext.file_mkdir",
+      "params": {
+        "path": "./test-output",
+        "recursive": true
+      }
+    },
+    {
+      "id": "step19",
+      "name": "Write test file",
+      "type": "action",
+      "uses": "ext.file_write",
+      "params": {
+        "path": "./test-output/test.txt",
+        "data": "AutoWorkflow Basic Actions Test File\nCreated at: ${new Date().toISOString()}",
+        "encoding": "utf8"
+      }
+    },
+    {
+      "id": "step20",
+      "name": "Read test file",
+      "type": "action",
+      "uses": "ext.file_read",
+      "params": {
+        "path": "./test-output/test.txt",
+        "encoding": "utf8"
+      }
+    },
+    {
+      "id": "step21",
+      "name": "List directory contents",
+      "type": "action",
+      "uses": "ext.file_list",
+      "params": {
+        "path": "./test-output",
+        "options": {
+          "extensions": [".txt", ".json"],
+          "pattern": "test.*"
+        }
+      }
+    },
+    {
+      "id": "step22",
+      "name": "Copy test file",
+      "type": "action",
+      "uses": "ext.file_copy",
+      "params": {
+        "path": "./test-output/test.txt",
+        "options": {
+          "destination": "./test-output/test-copy.txt"
+        },
+        "recursive": true
+      }
+    },
+    {
+      "id": "step23",
+      "name": "Launch/activate text editor",
+      "type": "action",
+      "uses": "ext.os_activate_app",
+      "params": {
+        "app_names": ["TextEdit", "Notepad", "gedit", "nano"],
+        "soft": true
+      }
+    },
+    {
+      "id": "step24",
+      "name": "Focus window by title",
+      "type": "action",
+      "uses": "ext.window_focus",
+      "params": {
+        "title": "AutoWorkflow",
+        "soft": true
+      }
+    },
+    {
+      "id": "step25",
+      "name": "Restore original clipboard",
+      "type": "action",
+      "uses": "ext.clipboard_pop",
+      "params": {}
+    },
+    {
+      "id": "step26",
+      "name": "Clean up test files",
+      "type": "action",
+      "uses": "ext.file_remove",
+      "params": {
+        "path": "./test-output",
+        "soft": true
+      }
+    }
+  ],
+  "edges": [
+    {"from": "step1", "to": "step2"},
+    {"from": "step2", "to": "step3"},
+    {"from": "step3", "to": "step4"},
+    {"from": "step4", "to": "step5"},
+    {"from": "step5", "to": "step6"},
+    {"from": "step6", "to": "step7"},
+    {"from": "step7", "to": "step8"},
+    {"from": "step8", "to": "step9"},
+    {"from": "step9", "to": "step10"},
+    {"from": "step10", "to": "step11"},
+    {"from": "step11", "to": "step12"},
+    {"from": "step12", "to": "step13"},
+    {"from": "step13", "to": "step14"},
+    {"from": "step14", "to": "step15"},
+    {"from": "step15", "to": "step16"},
+    {"from": "step16", "to": "step17"},
+    {"from": "step17", "to": "step18"},
+    {"from": "step18", "to": "step19"},
+    {"from": "step19", "to": "step20"},
+    {"from": "step20", "to": "step21"},
+    {"from": "step21", "to": "step22"},
+    {"from": "step22", "to": "step23"},
+    {"from": "step23", "to": "step24"},
+    {"from": "step24", "to": "step25"},
+    {"from": "step25", "to": "step26"}
+  ],
+  "metadata": {
+    "description": "Comprehensive test of all basic actions",
+    "categories": ["clipboard", "mouse", "keyboard", "system", "file"],
+    "platform_support": ["darwin", "win32", "linux"],
+    "features": [
+      "Clipboard stack management (push/pop/clear)",
+      "Enhanced mouse actions (triple-click, right-click, middle-click, wheel)",
+      "Enhanced keyboard actions (key_down/up, select_all, copy/cut/paste, toggle_ime)",
+      "System operations (shell commands, app activation)",
+      "File operations (read/write/mkdir/remove/copy/move/list)",
+      "Window management (focus by title)"
+    ]
+  }
+}

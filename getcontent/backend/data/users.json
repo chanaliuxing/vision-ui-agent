@@ -1,0 +1,12 @@
+[
+  {
+    "account_id": "acct_admin",
+    "username": "admin",
+    "password_hash": "$2a$10$IanIpXRrneIbW21o9jN6E.lKiTky9Vmyw6jiX8zHlihy4ttkO7khu"
+  },
+  {
+    "account_id": "acct_testuser",
+    "username": "testuser",
+    "password_hash": "$2a$10$8QXcM6hubwj5hLpKtq1YZ.EaY5HsRDDjTfsrD8hOkIA8vpgqw0Qmm"
+  }
+]

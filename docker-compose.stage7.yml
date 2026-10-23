@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: autoagent
+    ports: ["5433:5432"]
+    volumes:
+      - "./server/sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
+
+  api:
+    image: node:20
+    working_dir: /app
+    command: bash -lc "npm i && node src/index.js"
+    volumes:
+      - ./server:/app
+    environment:
+      DATABASE_URL: postgres://app:app@db:5432/autoagent
+      JWT_SECRET: dev_secret_change_me
+      PORT: 8080
+    depends_on: [db]
+    ports: ["8080:8080"]

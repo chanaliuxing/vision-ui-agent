@@ -1,0 +1,58 @@
+{
+  "page_signature": { "host": "xhs.", "path_hint": "/explore|/search|/" },
+  "vars": {
+    "query": "加拿大学校申请"
+  },
+  "steps": [
+    { "wait": { "selector": "main, #root, [role='main']", "ms": 4000 }},
+
+    {
+      "slot": "search_input",
+      "candidates": [
+        "input[type='search']",
+        "input[placeholder*='搜索']",
+        "input[placeholder*='Search']",
+        "input",
+        "textarea",
+        "div[contenteditable='true']"
+      ],
+      "action": { "type": "type", "text": "{{query}}\n", "replace": true },
+      "retry": { "attempts": 2, "base_ms": 300 },
+      "post_verify": { "selector": "input, textarea, div[contenteditable='true']", "min_length": 2 }
+    },
+
+    {
+      "wait": { "ms": 800 }
+    },
+
+    {
+      "await_network": { "pattern": "search|note|result|feed", "timeoutMs": 5000, "windowMs": 800, "maxBodies": 4 }
+    },
+
+    {
+      "verify": {
+        "selector": ".note-item, .note-card, [data-testid*='note']",
+        "min_length": 1
+      }
+    },
+
+    {
+      "emit": {
+        "name": "results",
+        "list": {
+          "within": "main, #root, [role='main']",
+          "item_css": ".note-item, .note-card, li:has(a[href*='/explore/']), article:has(a[href*='/explore/'])",
+          "fields": [
+            { "name": "title",        "type": "queryText", "css": "h3, h2, .title, [data-role='title']" },
+            { "name": "post_url",     "type": "queryAttr", "css": "a[href*='/explore/'], a[href*='/discovery/item/']", "attr": "href" },
+            { "name": "author",       "type": "queryText", "css": ".author, .nickname, [data-author], a[href*='/user/']" },
+            { "name": "profile_url",  "type": "queryAttr", "css": "a[href*='/user/'], a[href*='/profile']", "attr": "href" },
+            { "name": "thumb",        "type": "queryAttr", "css": "img", "attr": "src" }
+          ],
+          "take": { "last_n": 24 }
+        }
+      }
+    }
+  ]
+}
+

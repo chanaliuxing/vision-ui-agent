@@ -1,0 +1,29 @@
+{
+  "start": "open_home",
+  "states": {
+    "open_home": {
+      "actions": [
+        { "do": "open_url", "url": "https://www.xiaohongshu.com/explore", "app": "Google Chrome" },
+        { "do": "sleep_ms", "value": 6000 },
+        
+        {
+          "do": "autostep",
+          "goal": "在小红书网站发长文，先找到发布页面，在发布页面找到发长文，在发长文页面进入到创作里面，直到看到可以编辑 (no images/videos; controversial tone about Claude Code hallucinations)",
+          "picker": "vision",
+          "k": 12,
+          "verify": {"timeout_ms": 8000, "poll_ms": 600, "rules": ["page_change"]},
+          "fallback": {"action": "scroll"},
+          
+          "save": {
+            "shot": "step_{n}.png",
+            "yolo": "yolo_{n}.json",
+            "picker": "picker_{n}.json"
+          }
+        },
+        { "do": "sleep_ms", "value": 1200 }
+      ],
+      "on_success": "autonext"
+    },
+    "done": { "actions": [{ "do": "sleep_ms", "value": 200 }] }
+  }
+}

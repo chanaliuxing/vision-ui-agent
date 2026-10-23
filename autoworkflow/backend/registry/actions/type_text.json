@@ -1,0 +1,43 @@
+{
+  "id": "type_text",
+  "title": "Type text (OS)",
+  "description": "Types text using OS-level input methods",
+  "schema": {
+    "type": "object",
+    "required": ["text"],
+    "properties": {
+      "text": {
+        "type": "string",
+        "description": "Text to type"
+      },
+      "mode": {
+        "enum": ["type", "paste", "auto"],
+        "default": "auto",
+        "description": "Input method to use"
+      },
+      "clear_first": {
+        "type": "boolean",
+        "default": false,
+        "description": "Clear existing text before typing"
+      },
+      "delay_ms": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 5000,
+        "default": 50,
+        "description": "Delay between key presses in milliseconds"
+      }
+    }
+  },
+  "capabilities": ["system"],
+  "prerequisites": [],
+  "cost_estimate": {
+    "llm_tokens": 0,
+    "api_calls": 0,
+    "execution_ms": 200
+  },
+  "platforms": ["windows", "mac", "linux"],
+  "version": "1.0.0",
+  "author": "AutoWorkflow",
+  "tags": ["text", "input", "system"]
+}

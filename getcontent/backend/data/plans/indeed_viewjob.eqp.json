@@ -1,0 +1,47 @@
+{
+  "page_signature": {"host": "indeed.", "path_hint": "/viewjob"},
+  "goals": ["extract_job", "locate_apply_button"],
+  "frames": [
+    {
+      "queries": [
+        {
+          "id": "jd_anchor",
+          "selector": {
+            "by_anchor": {
+              "anchor_text": ["Full job description", "职位描述", "Job Description"],
+              "container_css": "main, #jobDescriptionText",
+              "descendant_css": "div,section,article"
+            }
+          },
+          "verify": {"min_count": 1}
+        },
+        {
+          "id": "jd_html",
+          "selector": {
+            "relative_to": "jd_anchor",
+            "css": "div,section,article",
+            "css_candidates": ["article", "section", "#jobDescriptionText div"]
+          },
+          "extract": {"type": "innerHTML"},
+          "verify": {"min_length": 500},
+          "fallback": [
+            {"use": "network_sniff", "pattern": "jobPosting|jobDescription"}
+          ]
+        },
+        {
+          "id": "apply_btn",
+          "selector": {
+            "css": "button:has-text('Apply'), a[aria-label*='Apply'], [data-tn-element='applyButton']",
+            "css_candidates": [
+              "[data-tn-element='applyButton']",
+              "a[aria-label*='Apply']",
+              "button:has-text('Apply')",
+              "a[href*='apply']"
+            ]
+          },
+          "verify": {"min_count": 1}
+        }
+      ]
+    }
+  ]
+}

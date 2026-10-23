@@ -1,0 +1,91 @@
+# docker-compose.override.yml
+# 本地开发环境覆盖配置
+
+version: '3.8'
+
+services:
+  # 开发环境下暴露更多端口用于调试
+  yolo-api:
+    ports:
+      - "8000:8000"  # 直接访问调试
+    volumes:
+      - ./weights:/app/weights
+      - ./out:/app/out
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=debug
+
+  ocr-api:
+    ports:
+      - "8001:8001"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=debug
+
+  workflow-api:
+    ports:
+      - "8002:8002"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=debug
+
+  recall-api:
+    ports:
+      - "8003:8003"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=debug
+
+  vision-analysis:
+    ports:
+      - "8007:8007"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=debug
+
+  # 平台服务调试端口
+  dpo-service:
+    ports:
+      - "8004:8004"
+
+  model-manager:
+    ports:
+      - "8005:8005"
+
+  ab-testing:
+    ports:
+      - "8006:8006"
+
+  # 开发工具
+  redis:
+    profiles: [dev-tools, dev-full]
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # 日志聚合 (可选)
+  loki:
+    profiles: [observability, dev-full]
+    image: grafana/loki:2.9.0
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki_data:/loki
+
+  # 监控 (可选)
+  prometheus:
+    profiles: [observability, dev-full]
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+
+volumes:
+  redis_data:
+  loki_data:
+  prometheus_data:

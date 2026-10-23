@@ -1,0 +1,53 @@
+{
+  "id": "llm.plan",
+  "title": "LLM planning step",
+  "description": "Uses LLM to analyze situation and plan next actions",
+  "schema": {
+    "type": "object",
+    "required": ["goal"],
+    "properties": {
+      "goal": {
+        "type": "string",
+        "description": "Goal or objective for the LLM to achieve"
+      },
+      "context": {
+        "type": "object",
+        "description": "Additional context variables"
+      },
+      "model": {
+        "enum": ["gpt-4", "gpt-4-turbo", "claude-3-sonnet", "claude-3-haiku", "gemini-pro"],
+        "default": "gpt-4",
+        "description": "LLM model to use"
+      },
+      "max_tokens": {
+        "type": "integer",
+        "minimum": 50,
+        "maximum": 4000,
+        "default": 1000,
+        "description": "Maximum response tokens"
+      },
+      "temperature": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 2.0,
+        "default": 0.7,
+        "description": "Response creativity"
+      },
+      "system_prompt": {
+        "type": "string",
+        "description": "Custom system prompt"
+      }
+    }
+  },
+  "capabilities": ["llm"],
+  "prerequisites": [],
+  "cost_estimate": {
+    "llm_tokens": 1000,
+    "api_calls": 1,
+    "execution_ms": 5000
+  },
+  "platforms": ["windows", "mac", "linux", "web"],
+  "version": "1.0.0",
+  "author": "AutoWorkflow",
+  "tags": ["llm", "planning", "ai", "reasoning"]
+}

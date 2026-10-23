@@ -1,0 +1,48 @@
+{
+  "page_signature": { "host": "indeed.", "path_hint": "/viewjob" },
+  "vars": {},
+  "steps": [
+    { "wait": { "selector": "main, #jobDescriptionText", "ms": 3000 }},
+
+    {
+      "slot": "apply_btn",
+      "candidates": ["button:has-text('Apply')", "a[aria-label*='Apply']", "[data-tn-element='applyButton']"],
+      "action": { "type": "click" },
+      "retry": { "attempts": 2, "base_ms": 300 },
+      "await_network_after": { "pattern": "apply|resume|jobPosting", "timeoutMs": 4000, "windowMs": 800 }
+    },
+
+    {
+      "slot": "resume_drop",
+      "candidates": ["[data-dropzone]", ".dropzone", "[aria-label*='drop']", "[class*='drop']"],
+      "action": { "type": "uploadResumeDrop", "data_url": "{{resume_data_url}}", "filename": "{{resume_filename}}" },
+      "retry": { "attempts": 1, "base_ms": 300 },
+      "post_verify": { "selector": "[class*='uploaded'], [data-state*='uploaded']", "min_length": 1 }
+    },
+
+    {
+      "slot": "resume_input_fallback",
+      "candidates": ["input[type='file']", "input[type='file'][name*='resume']"],
+      "action": { "type": "uploadResumePrompt" },
+      "retry": { "attempts": 1, "base_ms": 300 }
+    },
+
+    {
+      "emit": {
+        "name": "job",
+        "props": [
+          { "name": "title",   "selector": "h1, h2[role='heading']", "type": "innerText" },
+          { "name": "company", "selector": "[data-company-name], .jobsearch-CompanyInfoWithoutHeaderImage div", "type": "innerText" },
+          { "name": "desc",    "selector": "#jobDescriptionText, [id*='jobDescription'], article", "type": "innerText" }
+        ]
+      }
+    },
+
+    {
+      "verify": {
+        "selector": "iframe, [id*='apply'], [class*='apply'], [data-tn-element*='apply']",
+        "sample_contains_any": ["Apply", "申请", "Resume", "简历"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "start": "open_home",
+  "states": {
+    "open_home": {
+      "actions": [
+        { "do": "open_url", "url": "https://www.xiaohongshu.com/explore", "app": "Google Chrome" },
+        { "do": "sleep_ms", "value": 6000 },
+        {
+          "do": "autostep",
+          "goal": "进入搜索输入框（聚焦顶部搜索框）",
+          "picker": "vision",
+          "k": 12,
+          "verify": { "timeout_ms": 8000, "poll_ms": 600, "rules": [] },
+          "fallback": { "action": "scroll" },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        }
+      ],
+      "on_success": "search"
+    },
+    "search": {
+      "actions": [
+        { "do": "type_text", "text": "温哥华 卖车", "mode": "type" },
+        { "do": "sleep_ms", "value": 1000 },
+        { "do": "type_text", "text": "\n", "mode": "type" },
+        { "do": "sleep_ms", "value": 3000 }
+      ],
+      "on_success": "results"
+    },
+    "results": {
+      "actions": [
+        { "do": "sleep_ms", "value": 2000 },
+        {
+          "do": "autostep",
+          "goal": "点击左上角第一个搜索结果卡片（位置最靠上且最靠左的帖子）",
+          "picker": "vision",
+          "k": 12,
+          "hints": ["选择页面左上角的第一个帖子", "避免选择右侧或下方的帖子", "选择最上排最左边的内容卡片"],
+          "verify": { "timeout_ms": 12000, "poll_ms": 600, "rules": ["page_change"] },
+          "fallback": { "action": "scroll", "clicks": -200 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        }
+      ],
+      "on_success": "detail"
+    },
+    "detail": {
+      "actions": [
+        { "do": "sleep_ms", "value": 3000 },
+        { "do": "scroll", "clicks": -200 },
+        {
+          "do": "autostep",
+          "goal": "滚动查看评论区或点击评论按钮",
+          "picker": "vision",
+          "k": 12,
+          "verify": { "timeout_ms": 8000, "poll_ms": 600, "rules": [] },
+          "fallback": { "action": "scroll", "clicks": -300 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        },
+        { "do": "sleep_ms", "value": 2000 },
+        {
+          "do": "autostep", 
+          "goal": "找到并点击评论输入框",
+          "picker": "vision",
+          "k": 12,
+          "verify": { "timeout_ms": 6000, "poll_ms": 600, "rules": [] },
+          "fallback": { "action": "scroll", "clicks": -300 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        },
+        { "do": "type_text", "text": "非常好", "mode": "type" },
+        { "do": "sleep_ms", "value": 1000 },
+        {
+          "do": "autostep",
+          "goal": "发送评论（点击发送/发布按钮）",
+          "picker": "vision", 
+          "k": 12,
+          "verify": { "timeout_ms": 10000, "poll_ms": 600, "rules": ["appear:toast"] },
+          "fallback": { "action": "scroll", "clicks": -200 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        }
+      ],
+      "on_success": "done"
+    },
+    "done": { "actions": [ { "do": "sleep_ms", "value": 300 } ] }
+  }
+}

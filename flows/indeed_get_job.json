@@ -1,0 +1,45 @@
+{
+  "name": "Indeed.ca Job Application Starter (DOM-Only)",
+  "description": "Opens Indeed.ca, clicks the first job, extracts the description, and clicks apply using direct DOM selectors.",
+  "start": "open_indeed",
+  "states": {
+    "open_indeed": {
+      "description": "Wake up Chrome, open Indeed.ca homepage, and wait for it to settle.",
+      "actions": [
+        { "do": "open_url", "url": "about:blank", "app": "Google Chrome" },
+        { "do": "sleep_ms", "value": 800 },
+        { "do": "ext.open_url", "url": "https://ca.indeed.com/", "active": true },
+        { "do": "wait_for", "until": { "type": "ext.wait_quiet", "timeout_ms": 15000 } }
+      ],
+      "on_success": "click_first_job"
+    },
+    "click_first_job": {
+      "description": "Use a direct DOM selector to click the first job listing.",
+      "actions": [
+        { "do": "ext.click_selector", "sel": "#sj_ef61a8ab70567358" },
+        { "do": "wait_for", "until": { "type": "ext.wait_quiet", "timeout_ms": 10000 } }
+      ],
+      "on_success": "extract_job_description"
+    },
+    "extract_job_description": {
+      "description": "Extract the full text from the job description section using a direct selector.",
+      "actions": [
+        { 
+          "do": "ext.extract", 
+          "args": { 
+            "selector": "#jobDescriptionText" 
+          }, 
+          "save": "job_description_text" 
+        }
+      ],
+      "on_success": "click_apply_button"
+    },
+    "click_apply_button": {
+      "description": "Find and click the apply button using a direct selector.",
+      "actions": [
+        { "do": "ext.click_selector", "sel": "#applyButtonLinkContainer button" }
+      ],
+      "on_success": null
+    }
+  }
+}

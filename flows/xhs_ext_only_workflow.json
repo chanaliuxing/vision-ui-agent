@@ -1,0 +1,59 @@
+{
+  "name": "XHS Ext-Only Automation (No Vision, DOM+LLM)",
+  "description": "Pure extension automation with DOM snapshot + LLM decision (no YOLO autostep).",
+  "start": "wake_then_bind",
+  "states": {
+    "wake_then_bind": {
+      "description": "Wake Chrome and navigate to XHS explore page.",
+      "actions": [
+        { "do": "open_url", "url": "about:blank", "app": "Google Chrome" },
+        { "do": "sleep_ms", "value": 800 },
+        { "do": "ext.open_url", "url": "https://www.xiaohongshu.com/explore", "active": true },
+        { "do": "wait_for", "until": { "type": "ext.wait_quiet", "timeout_ms": 18000, "poll_ms": 400 } }
+      ],
+      "on_success": "search"
+    },
+
+    "search": {
+      "description": "Use DOM snapshot + LLM to find search input, type query, and submit.",
+      "actions": [
+        { "do": "ext.extract", "args": { "want": "inputs", "limit": 30 }, "save": "dom_snapshot" },
+        {
+          "do": "llm_decide",
+          "args": {
+            "goal": "Find the main search input on the homepage and return a CSS selector.",
+            "dom": "@dom_snapshot",
+            "context": { "phase": "search", "history": "homepage loaded" }
+          },
+          "save": "chosen_selector"
+        },
+        { "do": "ext.click_selector", "sel": "@chosen_selector" },
+        { "do": "ext.type_text", "sel": ":focus", "text": "如何自己打官司", "replace": true },
+        { "do": "sleep_ms", "value": 1000 },
+        { "do": "ext.key", "key": "Enter" },
+        { "do": "type_text", "text": "\n", "mode": "type" },
+        { "do": "wait_for", "until": { "type": "ext.wait_quiet", "timeout_ms": 20000, "poll_ms": 300 } }
+      ],
+      "on_success": "open_first_post"
+    },
+
+    "open_first_post": {
+      "description": "Use DOM snapshot + LLM to find the first search result post and click it.",
+      "actions": [
+        { "do": "ext.extract", "args": { "want": "links", "limit": 50 }, "save": "dom_snapshot" },
+        {
+          "do": "llm_decide",
+          "args": {
+            "goal": "Find the first (top-left) post card in the search results grid. Return a CSS selector to click.",
+            "dom": "@dom_snapshot",
+            "context": { "phase": "results", "history": "search submitted" }
+          },
+          "save": "chosen_selector"
+        },
+        { "do": "ext.click_selector", "sel": "@chosen_selector" },
+        { "do": "wait_for", "until": { "type": "ext.wait_quiet", "timeout_ms": 15000, "poll_ms": 400 } }
+      ],
+      "on_success": null
+    }
+  }
+}

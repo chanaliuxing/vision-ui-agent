@@ -1,0 +1,80 @@
+{
+  "version": "4.0",
+  "start": "open_browser",
+  "autofix": {
+    "mode": "auto_promote_on_success",
+    "promote": {
+      "enabled": true,
+      "threshold": { "successes": 10, "window": 20, "min_runs": 15 }
+    },
+    "allowed_patch_kinds": ["wait_quiet_insert", "scroll_then_retry", "selector_role_text", "dom_to_coords_fallback"]
+  },
+  "vars": {
+    "i": 0,
+    "max_jobs": 10,
+    "user_email": "candidate@example.com",
+    "user_password": "CHANGE_ME"
+  },
+  "states": {
+    "open_browser": {
+      "actions": [
+        { "do": "instr.navigate", "url": "https://indeed.com" },
+        { "do": "instr.wait", "ms": 5000 }
+      ],
+      "transitions": [{ "go_to": "select_job_listing" }]
+    },
+    "select_job_listing": {
+      "actions": [
+        { "do": "autostep", "goal": "Click the @i+1 job listing in the main list", "executor": "dom" },
+        { "do": "instr.wait", "ms": 2000 }
+      ],
+      "transitions": [{ "go_to": "click_initial_apply" }]
+    },
+    "click_initial_apply": {
+      "actions": [
+        { "do": "autostep", "goal": "Click the main apply button in the job details pane", "executor": "dom", "save": "apply_click_result" }
+      ],
+      "transitions": [
+        { "if": "@apply_click_result.ok == true", "go_to": "check_apply_type" },
+        { "else_go_to": "increment_and_loop" }
+      ]
+    },
+    "check_apply_type": {
+      "actions": [
+        { "do": "instr.wait", "ms": 4000 },
+        { "do": "autostep", "goal": "Check if a 'Continue' button for an Indeed application is visible", "executor": "dom", "save": "indeed_button_check" }
+      ],
+      "transitions": [
+        { "if": "@indeed_button_check.found == true", "go_to": "handle_indeed_flow" },
+        { "else_go_to": "handle_external_flow" }
+      ]
+    },
+    "handle_indeed_flow": {
+      "actions": [
+        { "do": "task.run", "name": "indeed.complete_application_step" },
+        { "do": "instr.task_complete", "message": "Stopping at Indeed submit page for this loop." }
+      ],
+      "transitions": [{ "go_to": "increment_and_loop" }]
+    },
+    "handle_external_flow": {
+      "actions": [
+        { "do": "task.run", "name": "external_site.register_and_apply", "args": { "email": "@user_email", "password": "@user_password" } }
+      ],
+      "transitions": [{ "go_to": "increment_and_loop" }]
+    },
+    "increment_and_loop": {
+      "actions": [
+        { "do": "increment_variable", "name": "i" }
+      ],
+      "transitions": [
+        { "if": "@i < @max_jobs", "go_to": "select_job_listing" },
+        { "else_go_to": "done" }
+      ]
+    },
+    "done": {
+      "actions": [
+        { "do": "instr.task_complete", "message": "Workflow finished: processed 10 job applications with AutoFix enabled." }
+      ]
+    }
+  }
+}

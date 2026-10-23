@@ -1,0 +1,150 @@
+{
+  "version": "1.1",
+  "name": "action_space_v2_examples",
+  "description": "演示Action Space v2的统一指令集和Task积木化功能",
+  "start": "demo_instructions",
+  "vars": {
+    "username": "test_user",
+    "password": "test_pass"
+  },
+  "states": {
+    "demo_instructions": {
+      "description": "演示统一指令集",
+      "actions": [
+        {
+          "do": "instr.navigate",
+          "url": "https://example.com"
+        },
+        {
+          "do": "instr.wait",
+          "ms": 2000
+        },
+        {
+          "do": "instr.click",
+          "target": {
+            "role": "button",
+            "text": "登录"
+          }
+        },
+        {
+          "do": "instr.type_text",
+          "target": {
+            "css": "input[name='username']"
+          },
+          "text": "{{username}}",
+          "clear": true
+        },
+        {
+          "do": "instr.type_text",
+          "target": {
+            "xpath": "//input[@type='password']"
+          },
+          "text": "{{password}}"
+        },
+        {
+          "do": "instr.key",
+          "key": "Enter",
+          "target": {
+            "css": "form.login-form"
+          }
+        },
+        {
+          "do": "instr.scroll",
+          "dir": "down",
+          "amount": 500,
+          "target": {
+            "css": ".content-area"
+          }
+        },
+        {
+          "do": "instr.hover",
+          "target": {
+            "role": "link",
+            "text": "用户中心"
+          }
+        },
+        {
+          "do": "instr.read",
+          "target": {
+            "css": ".user-info"
+          },
+          "fields": ["text", "attributes"],
+          "save": "user_data"
+        }
+      ],
+      "on_success": "demo_tasks"
+    },
+
+    "demo_tasks": {
+      "description": "演示Task积木化",
+      "actions": [
+        {
+          "do": "task.sync",
+          "host": "example.com"
+        },
+        {
+          "do": "task.list",
+          "host": "example.com",
+          "save": "available_tasks"
+        },
+        {
+          "do": "task.run",
+          "name": "example.login_sequence",
+          "args": {
+            "username": "{{username}}",
+            "password": "{{password}}"
+          },
+          "save": "login_result"
+        },
+        {
+          "do": "task.run",
+          "name": "example.extract_user_info",
+          "save": "extracted_info"
+        }
+      ],
+      "on_success": "demo_advanced"
+    },
+
+    "demo_advanced": {
+      "description": "演示高级功能",
+      "actions": [
+        {
+          "do": "instr.select_option",
+          "target": {
+            "css": "select[name='language']"
+          },
+          "value": "zh-CN"
+        },
+        {
+          "do": "instr.upload",
+          "target": {
+            "css": "input[type='file']"
+          },
+          "file": "/path/to/test.jpg"
+        },
+        {
+          "do": "instr.history",
+          "op": "back"
+        },
+        {
+          "do": "instr.annotate",
+          "text": "完成了所有基础功能演示"
+        },
+        {
+          "do": "instr.task_complete",
+          "message": "Action Space v2演示完成"
+        }
+      ],
+      "on_success": "done"
+    },
+
+    "done": {
+      "actions": [
+        {
+          "do": "instr.answer_user",
+          "text": "Action Space v2功能演示已完成。统一指令集和Task积木化系统工作正常。"
+        }
+      ]
+    }
+  }
+}

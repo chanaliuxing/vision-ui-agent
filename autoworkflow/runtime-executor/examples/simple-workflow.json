@@ -1,0 +1,46 @@
+{
+  "name": "Simple Test Workflow",
+  "version": "1.0.0",
+  "description": "Basic workflow to test M3 Runtime Executor",
+  "start": "step1",
+  "steps": [
+    {
+      "id": "step1",
+      "name": "Wait for page",
+      "type": "action",
+      "uses": "ext.wait",
+      "params": {
+        "timeout": 2000
+      }
+    },
+    {
+      "id": "step2",
+      "name": "Navigate to example page",
+      "type": "action",
+      "uses": "ext.navigate",
+      "params": {
+        "url": "https://example.com"
+      }
+    },
+    {
+      "id": "step3",
+      "name": "Extract page title",
+      "type": "action",
+      "uses": "ext.extract",
+      "params": {
+        "selector": "h1",
+        "attribute": "textContent"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "step1",
+      "to": "step2"
+    },
+    {
+      "from": "step2",
+      "to": "step3"
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "name": "Enhanced Mouse and Keyboard Demo",
+  "version": "1.0.0",
+  "description": "Demonstrates enhanced mouse and keyboard functionality including double-click, right-click, drag, combo keys, and key sequences",
+  "start": "step1",
+  "steps": [
+    {
+      "id": "step1",
+      "name": "Navigate to test page",
+      "type": "action",
+      "uses": "ext.navigate",
+      "params": {
+        "url": "https://example.com"
+      }
+    },
+    {
+      "id": "step2",
+      "name": "Double-click demonstration",
+      "type": "action",
+      "uses": "ext.click",
+      "params": {
+        "selector": "h1",
+        "times": 2,
+        "interval_ms": 140,
+        "button": "left"
+      }
+    },
+    {
+      "id": "step3",
+      "name": "Right-click context menu",
+      "type": "action",
+      "uses": "ext.context_click",
+      "params": {
+        "selector": "body",
+        "button": "right"
+      }
+    },
+    {
+      "id": "step4",
+      "name": "Mouse move to coordinates",
+      "type": "action",
+      "uses": "ext.mouse_move",
+      "params": {
+        "to": [400, 300],
+        "duration_ms": 500
+      }
+    },
+    {
+      "id": "step5",
+      "name": "Mouse drag operation",
+      "type": "action",
+      "uses": "ext.mouse_drag",
+      "params": {
+        "by": [100, 50],
+        "duration_ms": 800,
+        "button": "left"
+      }
+    },
+    {
+      "id": "step6",
+      "name": "Key combo - Ctrl+Shift+N",
+      "type": "action",
+      "uses": "ext.key_combo",
+      "params": {
+        "combo": "ctrl+shift+n"
+      }
+    },
+    {
+      "id": "step7",
+      "name": "Key sequence demonstration",
+      "type": "action",
+      "uses": "ext.key_sequence",
+      "params": {
+        "sequence": ["Hello", "space", "World", "enter", "This is enhanced text input"],
+        "options": {
+          "interval_ms": 80
+        }
+      }
+    },
+    {
+      "id": "step8",
+      "name": "Mouse down and up sequence",
+      "type": "action",
+      "uses": "ext.mouse_down",
+      "params": {
+        "coordinates": {"x": 200, "y": 200},
+        "button": "left"
+      }
+    },
+    {
+      "id": "step9",
+      "name": "Release mouse button",
+      "type": "action",
+      "uses": "ext.mouse_up",
+      "params": {
+        "button": "left"
+      }
+    },
+    {
+      "id": "step10",
+      "name": "Enhanced scroll with direction",
+      "type": "action",
+      "uses": "ext.scroll",
+      "params": {
+        "options": {
+          "direction": "down",
+          "amount": 5
+        }
+      }
+    },
+    {
+      "id": "step11",
+      "name": "Triple-click selection",
+      "type": "action",
+      "uses": "ext.click",
+      "params": {
+        "selector": "p",
+        "times": 3,
+        "interval_ms": 120,
+        "button": "left"
+      }
+    },
+    {
+      "id": "step12",
+      "name": "Complex key combo - Ctrl+Alt+Delete equivalent",
+      "type": "action",
+      "uses": "ext.key_combo",
+      "params": {
+        "combo": "ctrl+alt+f4"
+      }
+    }
+  ],
+  "edges": [
+    {"from": "step1", "to": "step2"},
+    {"from": "step2", "to": "step3"},
+    {"from": "step3", "to": "step4"},
+    {"from": "step4", "to": "step5"},
+    {"from": "step5", "to": "step6"},
+    {"from": "step6", "to": "step7"},
+    {"from": "step7", "to": "step8"},
+    {"from": "step8", "to": "step9"},
+    {"from": "step9", "to": "step10"},
+    {"from": "step10", "to": "step11"},
+    {"from": "step11", "to": "step12"}
+  ]
+}

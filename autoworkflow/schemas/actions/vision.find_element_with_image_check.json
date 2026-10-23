@@ -1,0 +1,28 @@
+{
+  "$id": "vision.find_element_with_image_check.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "vision.find_element_with_image_check",
+  "type": "object",
+  "required": ["anchor_image_id", "method"],
+  "properties": {
+    "anchor_image_id": { "type": "string", "description": "云端指纹ID或本地资源ID" },
+    "method": { "enum": ["image","template","yolo_class"], "default": "image" },
+    "threshold": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.75 },
+    "search_region": {
+      "type": "object",
+      "properties": { "x": {"type":"number"}, "y": {"type":"number"}, "w": {"type":"number"}, "h": {"type":"number"} },
+      "required": ["x","y","w","h"],
+      "additionalProperties": false
+    },
+    "uniqueness": { "enum": ["auto","nearest_to","largest","highest_score"], "default": "auto" },
+    "nearest_to": {
+      "type": "object",
+      "properties": {
+        "ref": { "type":"string", "description":"如 ${outputs.prev.center}" }
+      },
+      "required": ["ref"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

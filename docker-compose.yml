@@ -1,0 +1,342 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # ============ INFRA PROFILE ============
+  postgres:
+    profiles: [infra, runtime, dev-full]
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_DB: gamedb
+      POSTGRES_USER: gameuser
+      POSTGRES_PASSWORD: gamepass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gameuser -d gamedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  localstack:
+    profiles: [infra, runtime, dev-full]
+    image: localstack/localstack:3
+    environment:
+      SERVICES: sqs,s3
+      DEBUG: 1
+      AWS_DEFAULT_REGION: us-east-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack_data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  traefik:
+    profiles: [infra, runtime, dev-full, gateway]
+    image: traefik:v3.0
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik:/etc/traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.local`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+  # ============ RUNTIME PROFILE ============
+  yolo-api:
+    profiles: [runtime, dev-full, minimal]
+    build: .
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+      - AWS_ENDPOINT_URL=http://localstack:4566
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    expose:
+      - "8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.yolo.rule=PathPrefix(`/api/v1/vision/yolo`)"
+      - "traefik.http.routers.yolo.service=yolo"
+      - "traefik.http.services.yolo.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.yolo-stripprefix.stripprefix.prefixes=/api/v1/vision/yolo"
+      - "traefik.http.routers.yolo.middlewares=yolo-stripprefix"
+
+  ocr-api:
+    profiles: [runtime, dev-full]
+    build: .
+    command: uvicorn app_ocr:app --host 0.0.0.0 --port 8001
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8001"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ocr.rule=PathPrefix(`/api/v1/vision/ocr`)"
+      - "traefik.http.routers.ocr.service=ocr"
+      - "traefik.http.services.ocr.loadbalancer.server.port=8001"
+      - "traefik.http.middlewares.ocr-stripprefix.stripprefix.prefixes=/api/v1/vision/ocr"
+      - "traefik.http.routers.ocr.middlewares=ocr-stripprefix"
+
+  workflow-api:
+    profiles: [runtime, dev-full]
+    build: .
+    command: uvicorn app_workflow:app --host 0.0.0.0 --port 8002
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8002"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.workflow.rule=PathPrefix(`/api/v1/workflow`)"
+      - "traefik.http.routers.workflow.service=workflow"
+      - "traefik.http.services.workflow.loadbalancer.server.port=8002"
+      - "traefik.http.middlewares.workflow-stripprefix.stripprefix.prefixes=/api/v1/workflow"
+      - "traefik.http.routers.workflow.middlewares=workflow-stripprefix"
+
+  recall-api:
+    profiles: [runtime, dev-full]
+    build: .
+    command: uvicorn server.services.recall_api:app --host 0.0.0.0 --port 8003
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8003"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.recall.rule=PathPrefix(`/api/v1/recall`)"
+      - "traefik.http.routers.recall.service=recall"
+      - "traefik.http.services.recall.loadbalancer.server.port=8003"
+      - "traefik.http.middlewares.recall-stripprefix.stripprefix.prefixes=/api/v1/recall"
+      - "traefik.http.routers.recall.middlewares=recall-stripprefix"
+
+  vision-analysis:
+    profiles: [runtime, dev-full]
+    build: .
+    command: uvicorn vision.services.vision_api:app --host 0.0.0.0 --port 8007
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8007"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vision.rule=PathPrefix(`/api/v1/vision/analysis`)"
+      - "traefik.http.routers.vision.service=vision"
+      - "traefik.http.services.vision.loadbalancer.server.port=8007"
+      - "traefik.http.middlewares.vision-stripprefix.stripprefix.prefixes=/api/v1/vision/analysis"
+      - "traefik.http.routers.vision.middlewares=vision-stripprefix"
+
+  # ============ PLATFORM PROFILE ============
+  dpo-service:
+    profiles: [platform, dev-full]
+    build: .
+    command: uvicorn server.services.dpo_service:app --host 0.0.0.0 --port 8004
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8004"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dpo.rule=PathPrefix(`/api/v1/ml/dpo`)"
+      - "traefik.http.routers.dpo.service=dpo"
+      - "traefik.http.services.dpo.loadbalancer.server.port=8004"
+      - "traefik.http.middlewares.dpo-stripprefix.stripprefix.prefixes=/api/v1/ml/dpo"
+      - "traefik.http.routers.dpo.middlewares=dpo-stripprefix"
+
+  model-manager:
+    profiles: [platform, dev-full]
+    build: .
+    command: uvicorn server.services.model_manager:app --host 0.0.0.0 --port 8005
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8005"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.models.rule=PathPrefix(`/api/v1/ml/models`)"
+      - "traefik.http.routers.models.service=models"
+      - "traefik.http.services.models.loadbalancer.server.port=8005"
+      - "traefik.http.middlewares.models-stripprefix.stripprefix.prefixes=/api/v1/ml/models"
+      - "traefik.http.routers.models.middlewares=models-stripprefix"
+
+  ab-testing:
+    profiles: [platform, dev-full]
+    build: .
+    command: uvicorn server.services.ab_testing:app --host 0.0.0.0 --port 8006
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8006"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.experiments.rule=PathPrefix(`/api/v1/ml/experiments`)"
+      - "traefik.http.routers.experiments.service=experiments"
+      - "traefik.http.services.experiments.loadbalancer.server.port=8006"
+      - "traefik.http.middlewares.experiments-stripprefix.stripprefix.prefixes=/api/v1/ml/experiments"
+      - "traefik.http.routers.experiments.middlewares=experiments-stripprefix"
+
+  # ============ WEB PROFILE ============
+  replay-ui:
+    profiles: [web, dev-full]
+    build: .
+    command: python app_replay.py
+    ports:
+      - "8890:8890"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  getcontent-backend:
+    profiles: [web, dev-full]
+    build: ./getcontent/backend
+    command: npm run dev
+    ports:
+      - "8787:8787"
+    environment:
+      - NODE_ENV=development
+
+  # ============ WORKERS PROFILE ============
+  llm-worker:
+    profiles: [workers, runtime, dev-full, minimal]
+    build: ./server
+    command: node worker.js
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - MOCK_LLM=1
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+  embeddings-service:
+    profiles: [workers, dev-full]
+    build: .
+    command: python -m server.services.embeddings
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  teacher-scoring:
+    profiles: [workers, dev-full]
+    build: .
+    command: python -m server.services.teacher_scoring
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  auto-rollback:
+    profiles: [workers, dev-full]
+    build: .
+    command: python -m server.services.auto_rollback
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  multimodal-fusion:
+    profiles: [workers, dev-full]
+    build: .
+    command: python -m vision.services.multimodal_fusion
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  adaptive-executor:
+    profiles: [workers, dev-full]
+    build: .
+    command: python -m adaptive.engines.adaptive_executor
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  macro-registry:
+    profiles: [workers, dev-full]
+    build: .
+    command: python -m runtime.macros.registry
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ============ JOBS PROFILE ============
+  skill-mining:
+    profiles: [jobs, dev-full]
+    build: .
+    command: python -m jobs.skills.mine_subsequences
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  bootstrap:
+    profiles: [bootstrap]
+    build: .
+    command: python scripts/bootstrap_infrastructure.py
+    environment:
+      - POSTGRES_DSN=postgresql://gameuser:gamepass@postgres:5432/gamedb
+      - AWS_ENDPOINT_URL=http://localstack:4566
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  localstack_data:
+
+networks:
+  default:
+    name: game-network

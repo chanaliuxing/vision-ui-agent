@@ -1,0 +1,35 @@
+{
+  "templates": [
+    {
+      "template_id": "workflow_start",
+      "name": "\u5de5\u4f5c\u6d41\u542f\u52a8\u5ba1\u6279",
+      "risk_level": "RiskLevel.MEDIUM",
+      "title_template": "\u5de5\u4f5c\u6d41\u542f\u52a8\u5ba1\u6279: {workflow_id}",
+      "description_template": "\u8bf7\u6c42\u542f\u52a8\u5de5\u4f5c\u6d41 {workflow_id}\uff0c\u98ce\u9669\u7ea7\u522b: {risk_level}",
+      "expiry_minutes": 30,
+      "required_approvers": 1,
+      "allowed_approvers": null
+    },
+    {
+      "template_id": "high_risk_action",
+      "name": "\u9ad8\u98ce\u9669\u52a8\u4f5c\u5ba1\u6279",
+      "risk_level": "RiskLevel.HIGH",
+      "title_template": "\u9ad8\u98ce\u9669\u52a8\u4f5c\u5ba1\u6279: {action_type}",
+      "description_template": "\u8bf7\u6c42\u6267\u884c\u9ad8\u98ce\u9669\u52a8\u4f5c: {action_description}",
+      "expiry_minutes": 15,
+      "required_approvers": 1,
+      "allowed_approvers": null
+    },
+    {
+      "template_id": "critical_operation",
+      "name": "\u5173\u952e\u64cd\u4f5c\u5ba1\u6279",
+      "risk_level": "RiskLevel.CRITICAL",
+      "title_template": "\u5173\u952e\u64cd\u4f5c\u5ba1\u6279: {operation}",
+      "description_template": "\u8bf7\u6c42\u6267\u884c\u5173\u952e\u64cd\u4f5c\uff0c\u9700\u8981\u7acb\u5373\u5ba1\u6279: {operation_description}",
+      "expiry_minutes": 10,
+      "required_approvers": 2,
+      "allowed_approvers": null
+    }
+  ],
+  "updated_at": "2025-09-17T07:09:01.368440"
+}

@@ -1,0 +1,69 @@
+{
+  "$id": "action.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Action Registry Schema",
+  "description": "Schema for action definitions in the registry",
+  "type": "object",
+  "required": ["id", "title", "schema", "capabilities"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]+\\.[a-z_]+$",
+      "description": "Action identifier (e.g. ext.open_url, vision.find_element)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable action title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed action description"
+    },
+    "schema": {
+      "type": "object",
+      "description": "JSON Schema for action parameters",
+      "properties": {
+        "type": {"const": "object"},
+        "required": {"type": "array"},
+        "properties": {"type": "object"}
+      },
+      "required": ["type", "properties"]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "enum": ["web", "desktop", "mobile", "vision", "llm", "file", "network", "system"]
+      },
+      "description": "Required capabilities"
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Actions that must run before this one"
+    },
+    "cost_estimate": {
+      "type": "object",
+      "properties": {
+        "llm_tokens": {"type": "integer", "minimum": 0},
+        "api_calls": {"type": "integer", "minimum": 0},
+        "execution_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "enum": ["windows", "mac", "linux", "android", "ios", "web"]
+      },
+      "description": "Supported platforms"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "author": {"type": "string"},
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

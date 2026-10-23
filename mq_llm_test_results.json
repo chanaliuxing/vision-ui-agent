@@ -1,0 +1,110 @@
+[
+  {
+    "image": "s1.png",
+    "method": "direct",
+    "success": true,
+    "total_time": "5.48s",
+    "action": "click",
+    "confidence": "0.9%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s2.png",
+    "method": "direct",
+    "success": true,
+    "total_time": "2.06s",
+    "action": "click",
+    "confidence": "1.0%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s3.png",
+    "method": "direct",
+    "success": true,
+    "total_time": "1.82s",
+    "action": "click",
+    "confidence": "0.9%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s1.png",
+    "method": "mq",
+    "success": true,
+    "total_time": "3.24s",
+    "action": "click",
+    "confidence": "0.9%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s2.png",
+    "method": "mq",
+    "success": true,
+    "total_time": "1.77s",
+    "action": "click",
+    "confidence": "1.0%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s3.png",
+    "method": "mq",
+    "success": true,
+    "total_time": "1.19s",
+    "action": "click",
+    "confidence": "0.9%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s1.png",
+    "method": "auto",
+    "success": true,
+    "total_time": "1.67s",
+    "action": "click",
+    "confidence": "0.9%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s2.png",
+    "method": "auto",
+    "success": true,
+    "total_time": "1.73s",
+    "action": "click",
+    "confidence": "1.0%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  },
+  {
+    "image": "s3.png",
+    "method": "auto",
+    "success": true,
+    "total_time": "1.75s",
+    "action": "click",
+    "confidence": "0.9%",
+    "reason": "Fallback: highest confidence candidate",
+    "llm_method_used": "unknown",
+    "llm_latency": -1,
+    "stage_times": {}
+  }
+]

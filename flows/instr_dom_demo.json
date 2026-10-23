@@ -1,0 +1,19 @@
+{
+  "version": "1.1",
+  "name": "instr_dom_demo",
+  "description": "Minimal demo using instr.* with DOM targets (selector/role+text)",
+  "start": "demo",
+  "states": {
+    "demo": {
+      "actions": [
+        { "do": "instr.navigate", "url": "https://example.com" },
+        { "do": "instr.wait", "ms": 600 },
+        { "do": "instr.click", "target": { "css": "h1" } },
+        { "do": "instr.key", "key": "WaitQuiet" },
+        { "do": "instr.scroll", "dir": "down", "amount": 800 },
+        { "do": "instr.answer_user", "text": "DOM demo completed" }
+      ],
+      "on_success": null
+    }
+  }
+}

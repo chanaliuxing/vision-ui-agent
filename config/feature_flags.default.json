@@ -1,0 +1,9 @@
+{
+  "async_engine": false,
+  "hp_lp_scheduler": false,
+  "mq_rabbit": false,
+  "auth_billing": false,
+  "marketplace": false,
+  "checkpoints": false,
+  "strict_schema_llm": false
+}

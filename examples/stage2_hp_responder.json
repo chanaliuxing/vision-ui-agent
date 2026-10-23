@@ -1,0 +1,23 @@
+{
+  "name": "HP Responder",
+  "meta": { "priority": "HIGH" },
+  "start": "wait",
+  "states": {
+    "wait": {
+      "actions": [
+        { "do": "mq.consume", "topic": "hp", "save": "msg" }
+      ],
+      "transitions": [
+        { "if": "msg != None", "go_to": "send" },
+        { "go_to": "wait" }
+      ]
+    },
+    "send": {
+      "actions": [
+        { "do": "set_variable", "name": "last_contact", "value": "Alice" },
+        { "do": "set_variable", "name": "last_text", "value": "回复消息" }
+      ],
+      "transitions": [ { "go_to": "wait" } ]
+    }
+  }
+}

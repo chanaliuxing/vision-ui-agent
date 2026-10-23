@@ -1,0 +1,50 @@
+# KEDA Scaling Configuration for YOLO Workers
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: yolo-worker-scaler
+  namespace: default
+spec:
+  scaleTargetRef:
+    name: yolo-worker
+  pollingInterval: 10  # Check every 10 seconds
+  cooldownPeriod: 60   # Wait 60s before scaling down
+  idleReplicaCount: 1  # Minimum workers when idle
+  minReplicaCount: 1   # Absolute minimum
+  maxReplicaCount: 10  # Maximum workers
+
+  triggers:
+  - type: aws-sqs-queue
+    metadata:
+      queueURL: http://localstack:4566/000000000000/yolo-processing-queue
+      queueLength: "3"  # Scale up when >3 messages per worker
+      awsRegion: us-east-1
+      awsEndpoint: http://localstack:4566
+    authenticationRef:
+      name: aws-credentials
+
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: aws-credentials
+  namespace: default
+spec:
+  secretTargetRef:
+  - parameter: AWS_ACCESS_KEY_ID
+    name: aws-secret
+    key: access-key
+  - parameter: AWS_SECRET_ACCESS_KEY
+    name: aws-secret
+    key: secret-key
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-secret
+  namespace: default
+type: Opaque
+data:
+  access-key: dGVzdA==  # base64 of "test"
+  secret-key: dGVzdA==  # base64 of "test"

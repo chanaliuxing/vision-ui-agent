@@ -1,0 +1,230 @@
+{
+  "version": "1.2",
+  "name": "Indeed坐标申请示例",
+  "description": "使用坐标点击在Indeed上搜索AI职位并申请",
+  "features": {
+    "humanize": {
+      "mouse": true,
+      "typing": true
+    }
+  },
+  "start": "open_indeed",
+  "states": {
+    "open_indeed": {
+      "description": "打开Indeed并搜索AI职位",
+      "actions": [
+        {
+          "do": "ext.open_url",
+          "url": "https://indeed.com",
+          "active": true,
+          "trace_tag": "open_indeed"
+        },
+        {
+          "do": "wait_for",
+          "until": {
+            "type": "ext.wait_quiet",
+            "timeout_ms": 5000
+          }
+        },
+        {
+          "do": "ext.type_text",
+          "sel": "input[data-testid='job-search-bar']",
+          "text": "ai engineer",
+          "replace": true,
+          "trace_tag": "search_input"
+        },
+        {
+          "do": "ext.click_selector",
+          "sel": "button[data-testid='job-search-button']",
+          "trace_tag": "search_submit"
+        },
+        {
+          "do": "wait_for",
+          "until": {
+            "type": "ext.wait_quiet",
+            "timeout_ms": 8000
+          }
+        }
+      ],
+      "on_success": "harvest_jobs"
+    },
+
+    "harvest_jobs": {
+      "description": "提取职位列表和容器信息",
+      "actions": [
+        {
+          "do": "ext.extract",
+          "args": {
+            "container_sel_any_of": ["#mosaic-provider-jobcards", "[data-testid='jobResults']"],
+            "item_sel_any_of": [".jobCard_mainContent", "[data-testid^='jobCard-']"],
+            "fields": ["bbox"],
+            "collect": "rects",
+            "return_metrics": true,
+            "return_container_bbox": true
+          },
+          "save": "job_data",
+          "trace_tag": "extract_jobs"
+        },
+        {
+          "do": "get_list_length",
+          "from": "@job_data['rects']",
+          "save": "job_count"
+        },
+        {
+          "do": "set_variable",
+          "name": "current_job",
+          "value": 0
+        }
+      ],
+      "on_success": "process_job"
+    },
+
+    "process_job": {
+      "description": "处理单个职位",
+      "actions": [
+        {
+          "do": "get_list_item",
+          "from": "@job_data['rects']",
+          "index": "@current_job",
+          "save": "job_rect"
+        },
+        {
+          "do": "query_data",
+          "from": "@job_data",
+          "query": "container_bbox",
+          "save": "container"
+        },
+        {
+          "do": "branch",
+          "if": "!is_visible(@job_rect, @container)",
+          "then": "scroll_job_into_view",
+          "else": "click_job"
+        }
+      ]
+    },
+
+    "scroll_job_into_view": {
+      "description": "滚动职位到可视区域",
+      "actions": [
+        {
+          "do": "wheel_coordinates",
+          "at_bbox": "@container",
+          "amount": -300,
+          "trace_tag": "scroll_to_job"
+        },
+        {
+          "do": "wait",
+          "seconds": 0.5
+        }
+      ],
+      "on_success": "click_job"
+    },
+
+    "click_job": {
+      "description": "点击职位卡片",
+      "actions": [
+        {
+          "do": "click_coordinates",
+          "bbox": "@job_rect",
+          "trace_tag": "click_job_card",
+          "guard": {
+            "source_vars_only": true
+          }
+        },
+        {
+          "do": "wait_for",
+          "until": {
+            "type": "ext.wait_quiet",
+            "timeout_ms": 5000
+          }
+        }
+      ],
+      "on_success": "try_apply"
+    },
+
+    "try_apply": {
+      "description": "尝试寻找并点击Apply按钮",
+      "actions": [
+        {
+          "do": "ext.extract",
+          "args": {
+            "mode": "find_button_bbox",
+            "button_text_any_of": ["Apply", "Quick Apply", "Apply Now", "立即申请"],
+            "return_metrics": true
+          },
+          "save": "apply_result",
+          "trace_tag": "find_apply_button"
+        },
+        {
+          "do": "branch",
+          "if": "@apply_result != null && @apply_result['bbox'] != null",
+          "then": "click_apply_button",
+          "else": "next_job"
+        }
+      ]
+    },
+
+    "click_apply_button": {
+      "description": "点击Apply按钮",
+      "actions": [
+        {
+          "do": "click_coordinates",
+          "bbox": "@apply_result['bbox']",
+          "trace_tag": "click_apply_button",
+          "guard": {
+            "source_vars_only": true
+          }
+        },
+        {
+          "do": "wait_for",
+          "until": {
+            "type": "ext.wait_quiet",
+            "timeout_ms": 8000
+          }
+        },
+        {
+          "do": "log",
+          "message": "Successfully clicked apply for job @current_job",
+          "level": "info"
+        }
+      ],
+      "on_success": "next_job",
+      "on_error": "next_job"
+    },
+
+    "next_job": {
+      "description": "移动到下一个职位",
+      "actions": [
+        {
+          "do": "increment_variable",
+          "name": "current_job"
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@current_job < @job_count",
+          "go_to": "process_job"
+        },
+        {
+          "else_go_to": "refresh_and_continue"
+        }
+      ]
+    },
+
+    "refresh_and_continue": {
+      "description": "处理完当前页面，刷新继续",
+      "actions": [
+        {
+          "do": "log",
+          "message": "Processed @job_count jobs, refreshing page",
+          "level": "info"
+        },
+        {
+          "do": "wait",
+          "seconds": 2
+        }
+      ],
+      "on_success": "harvest_jobs"
+    }
+  }
+}

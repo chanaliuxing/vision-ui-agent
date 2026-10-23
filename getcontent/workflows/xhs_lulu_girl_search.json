@@ -1,0 +1,179 @@
+{
+  "name": "xiaohongshu_lulu_girl_search",
+  "description": "Search for 'lulu girl' and extract third post creator info",
+  "start": "search_phase",
+  "version": "1.0",
+  "states": {
+    "search_phase": {
+      "description": "Search for lulu girl on xiaohongshu",
+      "actions": [
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "#search-input, input[placeholder*='搜索'], input[placeholder*='登录探索'], .search-input input, input[type='search']",
+            "timeout_ms": 10000
+          },
+          "description": "Wait for search input to be available"
+        },
+        {
+          "do": "type",
+          "args": {
+            "selector": "#search-input, input[placeholder*='搜索'], input[placeholder*='登录探索'], .search-input input, input[type='search']",
+            "text": "lulu girl",
+            "clear": true,
+            "enter": true
+          },
+          "fallback": {
+            "vision_click": {
+              "label": "search_box",
+              "description": "Click search input using vision"
+            }
+          },
+          "description": "Type 'lulu girl' and search"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "[data-note-id], .note-item, .feed-item, .note, a[href*='/explore/'], [class*='note']",
+            "timeout_ms": 15000
+          },
+          "verify": {
+            "rules": ["dom_count>=3"]
+          },
+          "description": "Wait for search results to load"
+        }
+      ],
+      "next": "extract_third_post"
+    },
+
+    "extract_third_post": {
+      "description": "Find and extract third post creator information",
+      "actions": [
+        {
+          "do": "extract_nth_creator",
+          "args": {
+            "post_selector": "[data-note-id], .note-item, .feed-item, .note, a[href*='/explore/'], [class*='note']",
+            "index": 3,
+            "creator_selectors": [
+              "[class*='author'] [class*='name']",
+              "[class*='user'] [class*='name']", 
+              "[class*='creator'] [class*='name']",
+              ".author-name",
+              ".user-name",
+              ".username",
+              "[data-testid*='author']",
+              "[data-testid*='user']",
+              "a[href*='/user/']"
+            ],
+            "profile_selectors": [
+              "a[href*='/user/']",
+              "a[href*='/profile/']",
+              "[class*='author'] a",
+              "[class*='user'] a",
+              "[class*='creator'] a"
+            ]
+          },
+          "description": "Extract creator name and profile URL from third post"
+        },
+        {
+          "do": "click_nth_item",
+          "args": {
+            "list_selector": "[data-note-id], .note-item, .feed-item, .note, a[href*='/explore/'], [class*='note']",
+            "index": 3,
+            "wait_after": 3000
+          },
+          "description": "Click on the third post to get more details"
+        },
+        {
+          "do": "extract_creator_details",
+          "args": {
+            "selectors": {
+              "creator_name": [
+                "[class*='author'] [class*='name']",
+                "[class*='user'] [class*='name']",
+                ".author-name",
+                ".user-name", 
+                ".username",
+                "h1",
+                "h2",
+                "[data-testid*='author']",
+                "[data-testid*='username']"
+              ],
+              "profile_url": [
+                "a[href*='/user/']",
+                "a[href*='/profile/']",
+                "link[rel='canonical']"
+              ],
+              "follower_count": [
+                "[class*='follower']",
+                "[class*='fans']",
+                "[class*='follow']"
+              ],
+              "bio": [
+                "[class*='bio']",
+                "[class*='desc']", 
+                "[class*='intro']",
+                ".description"
+              ]
+            }
+          },
+          "description": "Extract detailed creator information from post page"
+        }
+      ],
+      "next": "save_data"
+    },
+
+    "save_data": {
+      "description": "Save extracted creator data",
+      "actions": [
+        {
+          "do": "save_creator_data",
+          "args": {
+            "file_path": "xhs/lulu_girl_third_creator.txt",
+            "database_table": "extracted_creators",
+            "include_timestamp": true,
+            "format": "both"
+          },
+          "description": "Save creator data to both file and database"
+        },
+        {
+          "do": "save_text",
+          "args": {
+            "path": "xhs/lulu_girl_search_results.txt",
+            "include_metadata": true,
+            "append_timestamp": true
+          },
+          "description": "Save complete search session data"
+        },
+        {
+          "do": "log_completion",
+          "args": {
+            "message": "Successfully extracted third post creator info for 'lulu girl' search",
+            "include_stats": true
+          },
+          "description": "Log successful completion with stats"
+        }
+      ]
+    }
+  },
+
+  "metadata": {
+    "created_at": "2025-09-11",
+    "target_sites": ["xiaohongshu.com"],
+    "search_term": "lulu girl",
+    "target_post_index": 3,
+    "expected_artifacts": [
+      "xhs/lulu_girl_third_creator.txt",
+      "xhs/lulu_girl_search_results.txt"
+    ],
+    "estimated_duration_seconds": 90,
+    "requires_vision_fallback": true,
+    "automation_type": "creator_info_extraction",
+    "objectives": [
+      "Search for 'lulu girl'",
+      "Locate third post in results",
+      "Extract creator name and profile URL",
+      "Save data to file and database"
+    ]
+  }
+}

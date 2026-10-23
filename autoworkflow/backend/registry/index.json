@@ -1,0 +1,93 @@
+{
+  "actions": [
+    {
+      "id": "ext.open_url",
+      "title": "Open URL in browser",
+      "schema": "actions/ext.open_url.json",
+      "prerequisites": [],
+      "capabilities": ["web"],
+      "cost_estimate": { "llm_tokens": 0 },
+      "output_contract": { "page": "string", "ready": "boolean" }
+    },
+    {
+      "id": "ext.key",
+      "title": "Send single key",
+      "schema": "actions/ext.key.json",
+      "prerequisites": [],
+      "capabilities": ["input"],
+      "cost_estimate": { "llm_tokens": 0 },
+      "output_contract": { "sent": "string", "modifiers": "array" }
+    },
+    {
+      "id": "type_text",
+      "title": "Type text (OS)",
+      "schema": "actions/type_text.json",
+      "prerequisites": [],
+      "capabilities": ["input"],
+      "cost_estimate": { "llm_tokens": 0 },
+      "output_contract": { "typed_len": "number", "mode": "string" }
+    },
+    {
+      "id": "ext.click",
+      "title": "Click on screen/DOM",
+      "schema": "actions/ext.click.json",
+      "prerequisites": ["ext.open_url"],
+      "capabilities": ["input","web"],
+      "cost_estimate": { "llm_tokens": 0 },
+      "output_contract": { "clicked": "boolean", "at": "object" }
+    },
+    {
+      "id": "vision.find_element_with_image_check",
+      "title": "Find UI element by image fingerprint",
+      "schema": "actions/vision.find_element_with_image_check.json",
+      "prerequisites": ["ext.open_url"],
+      "capabilities": ["vision"],
+      "cost_estimate": { "llm_tokens": 0 },
+      "output_contract": { "bbox": "object", "center": "array", "score": "number", "fingerprint_id": "string" }
+    },
+    {
+      "id": "ocr.extract_region",
+      "title": "OCR text from region",
+      "schema": "actions/ocr.extract_region.json",
+      "prerequisites": ["ext.open_url"],
+      "capabilities": ["ocr"],
+      "cost_estimate": { "llm_tokens": 0 },
+      "output_contract": { "text": "string", "lang": "string" }
+    },
+    {
+      "id": "llm.reply",
+      "title": "LLM reply",
+      "schema": "actions/llm.reply.json",
+      "prerequisites": [],
+      "capabilities": ["llm"],
+      "cost_estimate": { "llm_tokens": 200 },
+      "output_contract": { "text": "string" }
+    },
+    {
+      "id": "vision.find_element",
+      "title": "Find element with vision",
+      "schema": "actions/vision.find_element.json",
+      "capabilities": ["vision", "desktop"],
+      "prerequisites": [],
+      "cost_estimate": {
+        "llm_tokens": 150,
+        "api_calls": 1,
+        "execution_ms": 3000
+      },
+      "platforms": ["windows", "mac", "linux"]
+    },
+    {
+      "id": "llm.plan",
+      "title": "LLM planning step",
+      "schema": "actions/llm.plan.json",
+      "capabilities": ["llm"],
+      "prerequisites": [],
+      "cost_estimate": {
+        "llm_tokens": 1000,
+        "api_calls": 1,
+        "execution_ms": 5000
+      },
+      "platforms": ["windows", "mac", "linux", "web"]
+    }
+  ]
+}

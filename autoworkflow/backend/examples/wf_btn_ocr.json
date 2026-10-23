@@ -1,0 +1,22 @@
+{
+  "name": "click a known button then ocr",
+  "description": "Find by image fingerprint, click, then OCR a region",
+  "version": "1.0.0",
+  "globals": { "device_target": "web", "llm_budget": { "max_calls": 0, "max_tokens": 0 }, "auto_promote_on_success": false },
+  "start": "open",
+  "steps": [
+    { "id": "open", "type": "action", "uses": "ext.open_url",
+      "params": { "url": "https://example.com", "app": "Google Chrome", "wait_dom_quiet_ms": 800 } },
+    { "id": "find_btn", "type": "action", "uses": "vision.find_element_with_image_check",
+      "params": { "anchor_image_id": "btn_ok_blue_v3", "method": "image", "threshold": 0.76 } },
+    { "id": "click_btn", "type": "action", "uses": "ext.click",
+      "params": { "ref": "${outputs.find_btn.center}", "clicks": 1 } },
+    { "id": "read_area", "type": "action", "uses": "ocr.extract_region",
+      "params": { "ref": "${outputs.find_btn.bbox}", "backend": "auto", "lang": "en" } }
+  ],
+  "edges": [
+    { "from": "open", "to": "find_btn" },
+    { "from": "find_btn", "to": "click_btn" },
+    { "from": "click_btn", "to": "read_area" }
+  ]
+}

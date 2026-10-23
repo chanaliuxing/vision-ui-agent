@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schema/plugin.schema.json",
+  "title": "Workflow Plugin Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "version", "actions"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Plugin name (lowercase, underscores allowed)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version (e.g., 1.0.0)"
+    },
+    "engine_min": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Minimum required engine version"
+    },
+    "description": {
+      "type": "string",
+      "description": "Plugin description"
+    },
+    "author": {
+      "type": "string",
+      "description": "Plugin author"
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri-template",
+            "description": "Allowed host patterns (e.g., 'https://*.indeed.com')"
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["mouse", "keyboard", "screen", "network", "filesystem", "ext_messaging", "system"]
+          }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/plugin_action"
+      }
+    }
+  },
+  "$defs": {
+    "plugin_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "entry", "schema"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Action name"
+        },
+        "entry": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_/]+\\.(py|js):[a-zA-Z_][a-zA-Z0-9_]*$",
+          "description": "Entry point (e.g., 'actions.py:click_coordinates')"
+        },
+        "description": {
+          "type": "string",
+          "description": "Action description"
+        },
+        "schema": {
+          "type": "object",
+          "description": "JSON Schema for action parameters"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 300000,
+          "description": "Default timeout in milliseconds"
+        }
+      }
+    }
+  }
+}

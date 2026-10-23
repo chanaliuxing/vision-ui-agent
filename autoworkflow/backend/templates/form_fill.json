@@ -1,0 +1,99 @@
+{
+  "name": "表单填写",
+  "description": "通用表单字段填写模板",
+  "version": "1.0.0",
+  "category": "form",
+  "parameters": {
+    "form_url": {
+      "type": "string",
+      "description": "表单页面URL",
+      "default": "https://example.com/form"
+    },
+    "name": {
+      "type": "string",
+      "description": "姓名",
+      "default": "张三"
+    },
+    "email": {
+      "type": "string",
+      "description": "邮箱",
+      "default": "zhangsan@example.com"
+    },
+    "phone": {
+      "type": "string",
+      "description": "电话号码",
+      "default": "13812345678"
+    },
+    "company": {
+      "type": "string",
+      "description": "公司名称",
+      "default": "示例公司"
+    }
+  },
+  "workflow": {
+    "name": "{{name}} - 表单填写",
+    "version": "1.0.0",
+    "start": "open_form",
+    "steps": [
+      {
+        "id": "open_form",
+        "type": "action",
+        "uses": "ext.open_url",
+        "params": {
+          "url": "{{form_url}}"
+        }
+      },
+      {
+        "id": "fill_name",
+        "type": "action",
+        "uses": "ext.type",
+        "params": {
+          "selector": "input[name=name], input[placeholder*='姓名'], input[placeholder*='Name']",
+          "text": "{{name}}"
+        }
+      },
+      {
+        "id": "fill_email",
+        "type": "action",
+        "uses": "ext.type",
+        "params": {
+          "selector": "input[type=email], input[name=email], input[placeholder*='邮箱'], input[placeholder*='Email']",
+          "text": "{{email}}"
+        }
+      },
+      {
+        "id": "fill_phone",
+        "type": "action",
+        "uses": "ext.type",
+        "params": {
+          "selector": "input[type=tel], input[name=phone], input[placeholder*='电话'], input[placeholder*='Phone']",
+          "text": "{{phone}}"
+        }
+      },
+      {
+        "id": "fill_company",
+        "type": "action",
+        "uses": "ext.type",
+        "params": {
+          "selector": "input[name=company], input[placeholder*='公司'], input[placeholder*='Company']",
+          "text": "{{company}}"
+        }
+      },
+      {
+        "id": "submit_form",
+        "type": "action",
+        "uses": "ext.click",
+        "params": {
+          "selector": "button[type=submit], input[type=submit], button:contains('提交'), button:contains('Submit')"
+        }
+      }
+    ],
+    "edges": [
+      {"from": "open_form", "to": "fill_name"},
+      {"from": "fill_name", "to": "fill_email"},
+      {"from": "fill_email", "to": "fill_phone"},
+      {"from": "fill_phone", "to": "fill_company"},
+      {"from": "fill_company", "to": "submit_form"}
+    ]
+  }
+}

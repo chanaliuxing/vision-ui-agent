@@ -1,0 +1,129 @@
+{
+  "messages": {
+    "edbd60f5-81fe-43fa-bea0-dd29cd81d3ab": {
+      "message_id": "edbd60f5-81fe-43fa-bea0-dd29cd81d3ab",
+      "content": {
+        "task": "hp_0"
+      },
+      "priority": 3,
+      "queue_name": "hp_test",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:05.221062",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "completed",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:05.222124"
+    },
+    "6ee477ca-6d35-461c-ad75-fc7ad49d617e": {
+      "message_id": "6ee477ca-6d35-461c-ad75-fc7ad49d617e",
+      "content": {
+        "task": "hp_1"
+      },
+      "priority": 3,
+      "queue_name": "hp_test",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:05.221376",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "processing",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:05.222415"
+    },
+    "f0acca91-b68b-48b9-967e-0d23343aab47": {
+      "message_id": "f0acca91-b68b-48b9-967e-0d23343aab47",
+      "content": {
+        "task": "hp_2"
+      },
+      "priority": 3,
+      "queue_name": "hp_test",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:05.221553",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "processing",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:23.121216"
+    },
+    "143b57c8-6666-4a36-8442-72be907b6bcd": {
+      "message_id": "143b57c8-6666-4a36-8442-72be907b6bcd",
+      "content": {
+        "task": "hp_0"
+      },
+      "priority": 3,
+      "queue_name": "hp_test",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:23.119616",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "8f6d2e90-83ad-48fd-8149-f6386f26cac5": {
+      "message_id": "8f6d2e90-83ad-48fd-8149-f6386f26cac5",
+      "content": {
+        "task": "hp_1"
+      },
+      "priority": 3,
+      "queue_name": "hp_test",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:23.119916",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "85b5f2f3-79c8-4cda-b06b-bff700eb2b5c": {
+      "message_id": "85b5f2f3-79c8-4cda-b06b-bff700eb2b5c",
+      "content": {
+        "task": "hp_2"
+      },
+      "priority": 3,
+      "queue_name": "hp_test",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:23.120127",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    }
+  },
+  "pending_queues": {
+    "HIGH": [],
+    "CRITICAL": []
+  },
+  "group_queues": {
+    "test_group": [
+      "143b57c8-6666-4a36-8442-72be907b6bcd",
+      "8f6d2e90-83ad-48fd-8149-f6386f26cac5",
+      "85b5f2f3-79c8-4cda-b06b-bff700eb2b5c"
+    ]
+  },
+  "group_processing": {
+    "test_group": "f0acca91-b68b-48b9-967e-0d23343aab47"
+  },
+  "dedup_cache": {},
+  "dedup_ttl": {},
+  "saved_at": "2025-09-17T01:24:23.121372"
+}

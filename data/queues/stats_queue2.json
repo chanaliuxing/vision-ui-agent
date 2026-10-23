@@ -1,0 +1,32 @@
+{
+  "messages": {
+    "47648681-a06a-490f-bc75-51f4b7db289a": {
+      "message_id": "47648681-a06a-490f-bc75-51f4b7db289a",
+      "content": {
+        "test": "data2"
+      },
+      "priority": 2,
+      "queue_name": "stats_queue2",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:23.118421",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    }
+  },
+  "pending_queues": {
+    "NORMAL": [
+      "47648681-a06a-490f-bc75-51f4b7db289a"
+    ]
+  },
+  "group_queues": {},
+  "group_processing": {},
+  "dedup_cache": {},
+  "dedup_ttl": {},
+  "saved_at": "2025-09-17T01:24:23.118446"
+}

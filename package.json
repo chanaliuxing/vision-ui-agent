@@ -1,0 +1,15 @@
+{
+  "name": "vision-ui-agent",
+  "version": "0.1.0",
+  "description": "YOLO Local Element Perception + Multimodal VLM Desktop Automation Agent",
+  "author": "Wei Zhang",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

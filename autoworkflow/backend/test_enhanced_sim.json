@@ -1,0 +1,38 @@
+{
+  "workflow": {
+    "name": "test enhanced simulation",
+    "version": "1.0.0",
+    "start": "find_btn",
+    "steps": [
+      {
+        "id": "find_btn",
+        "type": "action",
+        "uses": "vision.find_element_with_image_check",
+        "params": {
+          "anchor_image_id": "btn_ok_blue_v3",
+          "method": "image",
+          "threshold": 0.76
+        }
+      },
+      {
+        "id": "click_btn",
+        "type": "action",
+        "uses": "ext.click",
+        "params": {
+          "ref": "${outputs.find_btn.center}"
+        }
+      }
+    ],
+    "edges": [
+      { "from": "find_btn", "to": "click_btn" }
+    ]
+  },
+  "explain": true,
+  "provider": "default",
+  "device": {
+    "width": 1920,
+    "height": 1080,
+    "scale": 1,
+    "name": "desktop-1920x1080"
+  }
+}

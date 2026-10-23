@@ -1,0 +1,37 @@
+{
+  "version": "1.1",
+  "name": "xhs_search_reply_instr",
+  "autofix": { "mode": "auto_promote_on_success", "limits": { "max_patches_per_run": 2 } },
+  "description": "XHS search and open first result using instr.* (DOM-first)",
+  "start": "open_home",
+  "states": {
+    "open_home": {
+      "actions": [
+        { "do": "instr.navigate", "url": "https://www.xiaohongshu.com/explore" },
+        { "do": "instr.key", "key": "WaitQuiet" },
+        { "do": "instr.click", "target": { "css": "input[placeholder*='搜索'], input[type=search]" } }
+      ],
+      "on_success": "search"
+    },
+    "search": {
+      "actions": [
+        { "do": "instr.type_text", "target": { "css": "input[placeholder*='搜索'], input[type=search]" }, "text": "温哥华 卖车", "clear": true },
+        { "do": "instr.key", "key": "Enter" },
+        { "do": "instr.wait", "ms": 3000 }
+      ],
+      "on_success": "results"
+    },
+    "results": {
+      "actions": [
+        { "do": "instr.wait", "ms": 1500 },
+        { "do": "instr.scroll", "dir": "down", "amount": 400 },
+        { "do": "instr.click", "target": { "css": "section a, a[href*='/explore/']" } },
+        { "do": "instr.key", "key": "WaitQuiet" }
+      ],
+      "on_success": "done"
+    },
+    "done": {
+      "actions": [ { "do": "instr.answer_user", "text": "xhs search/open completed" } ]
+    }
+  }
+}

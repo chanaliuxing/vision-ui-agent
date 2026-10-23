@@ -1,0 +1,21 @@
+{
+  "start": "pg_0000",
+  "states": {
+    "pg_0000": {
+      "actions": [
+        {
+          "do": "autostep"
+        }
+      ],
+      "on_success": "autonext"
+    },
+    "pg_0001": {
+      "actions": [
+        {
+          "do": "autostep"
+        }
+      ],
+      "on_success": "autonext"
+    }
+  }
+}

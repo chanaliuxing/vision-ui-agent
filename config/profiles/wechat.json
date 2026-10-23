@@ -1,0 +1,12 @@
+{
+  "window": {"x":0,"y":0,"w":1200,"h":800,"scale":1.0},
+  "left_list": {"x":60,"y":100,"w":300,"h":650},
+  "chat_area": {"x":380,"y":90,"w":800,"h":620},
+  "input_box": {"x":400,"y":740},
+  "anchors": {
+    "red_dot": "config/anchors/wechat/red_dot.png"
+  },
+  "thresholds": {
+    "red_dot": 0.85
+  }
+}

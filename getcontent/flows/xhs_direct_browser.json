@@ -1,0 +1,207 @@
+{
+  "name": "XHS Direct Browser Automation",
+  "description": "Direct browser automation - open Chrome and navigate to xiaohongshu.com",
+  "start": "open_chrome",
+  "llm_provider": "gemini", 
+  "llm_model": "gemini-1.5-flash",
+  "states": {
+    "open_chrome": {
+      "description": "Open Chrome browser using PyAutoGUI",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Click on the Chrome browser icon in the dock to open it. Look for the colorful Chrome icon.",
+            "target_class": "chrome_icon",
+            "use_pyautogui": true,
+            "click_after_find": true,
+            "wait_after": 3000
+          },
+          "description": "Click Chrome icon in dock"
+        }
+      ],
+      "on_success": "navigate_to_xhs"
+    },
+
+    "navigate_to_xhs": {
+      "description": "Navigate to xiaohongshu.com",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Click on the address bar in Chrome and type xiaohongshu.com. Look for the URL bar at the top of the browser.",
+            "target_class": "address_bar",
+            "use_pyautogui": true,
+            "click_after_find": true,
+            "wait_after": 1000
+          },
+          "description": "Click address bar"
+        },
+        {
+          "do": "type_text",
+          "args": {
+            "text": "xiaohongshu.com",
+            "use_pyautogui": true,
+            "press_enter": true,
+            "typing_delay": 0.05
+          },
+          "description": "Type URL and press Enter"
+        }
+      ],
+      "on_success": "wait_xhs_load"
+    },
+
+    "wait_xhs_load": {
+      "description": "Wait for xiaohongshu.com to load",
+      "actions": [
+        {
+          "do": "wait_for",
+          "args": {
+            "condition": "page_stable",
+            "timeout_ms": 15000
+          },
+          "description": "Wait for page load"
+        },
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Take a screenshot to verify xiaohongshu.com has loaded. Look for the characteristic red logo and Chinese text.",
+            "save_overlay": true,
+            "verify_page": "xiaohongshu.com"
+          },
+          "description": "Verify XHS page loaded"
+        }
+      ],
+      "on_success": "find_search"
+    },
+
+    "find_search": {
+      "description": "Find search input on xiaohongshu.com",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Find the search input box on xiaohongshu.com. It's usually at the top with placeholder text like '搜索' or '登录探索更多内容'. Click on it.",
+            "target_class": "search_box",
+            "use_pyautogui": true, 
+            "click_after_find": true,
+            "wait_after": 1000
+          },
+          "description": "Find and click search input"
+        }
+      ],
+      "on_success": "search_lulu_girl"
+    },
+
+    "search_lulu_girl": {
+      "description": "Search for 'lulu girl'",
+      "actions": [
+        {
+          "do": "type_text",
+          "args": {
+            "text": "lulu girl",
+            "use_pyautogui": true,
+            "clear_first": true,
+            "press_enter": true,
+            "typing_delay": 0.1
+          },
+          "description": "Type search query"
+        }
+      ],
+      "on_success": "detect_posts"
+    },
+
+    "detect_posts": {
+      "description": "Wait for search results and detect posts",
+      "actions": [
+        {
+          "do": "wait_for", 
+          "args": {
+            "condition": "page_change",
+            "timeout_ms": 10000
+          },
+          "description": "Wait for search results"
+        },
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Analyze the search results page and detect all post items. Look for post cards, images, and content blocks that represent individual posts.",
+            "target_class": "post_card",
+            "save_overlay": true,
+            "min_detections": 3
+          },
+          "description": "Detect post items with YOLO"
+        }
+      ],
+      "on_success": "click_third"
+    },
+
+    "click_third": {
+      "description": "Click the third post",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "From all the detected posts, find and click the THIRD post. Count from top-left, then across. Use PyAutoGUI to click it.",
+            "target_index": 3,
+            "use_pyautogui": true,
+            "click_after_find": true,
+            "wait_after": 3000
+          },
+          "description": "Click third post"
+        }
+      ],
+      "on_success": "extract_info"
+    },
+
+    "extract_info": {
+      "description": "Extract creator information",
+      "actions": [
+        {
+          "do": "autostep",
+          "args": {
+            "intent": "Extract the creator/author information from this xiaohongshu post page. Find the username, profile link, and other details.",
+            "extract_data": {
+              "creator_name": "Author username or display name",
+              "profile_url": "Link to creator's profile",
+              "post_content": "Post title or description text",
+              "stats": "Likes, comments, shares if visible"
+            },
+            "save_extraction": true
+          },
+          "description": "Extract creator data"
+        },
+        {
+          "do": "save_text",
+          "args": {
+            "path": "xhs/lulu_girl_real_extraction.txt",
+            "include_timestamp": true,
+            "include_metadata": true
+          },
+          "description": "Save extracted data"
+        }
+      ]
+    }
+  },
+
+  "metadata": {
+    "created_at": "2025-09-11",
+    "workflow_type": "direct_browser_automation",
+    "target_site": "xiaohongshu.com",
+    "search_query": "lulu girl", 
+    "automation_approach": "pyautogui_browser_control",
+    "expected_artifacts": [
+      "out/screens/overlay.png",
+      "xhs/lulu_girl_real_extraction.txt"
+    ],
+    "estimated_duration_seconds": 120,
+    "test_objectives": [
+      "Open Chrome browser with PyAutoGUI",
+      "Navigate to xiaohongshu.com",
+      "Perform real search for 'lulu girl'",
+      "Click third post with vision guidance", 
+      "Extract real creator information",
+      "Save results to file"
+    ]
+  }
+}

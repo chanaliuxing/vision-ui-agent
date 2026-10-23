@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"/><link rel="stylesheet" href="popup.css"/></head>
+<body>
+  <main>
+    <h3>YOLO+LLM MVP</h3>
+    <div id="status">Not authenticated</div>
+    <form id="loginForm">
+      <input id="username" placeholder="username" autocomplete="username"/>
+      <input id="password" type="password" placeholder="password" autocomplete="current-password"/>
+      <button type="submit">Login</button>
+    </form>
+    <button id="run">Run Plan</button>
+    <hr/>
+    <h4>Auto-Runner Daemon</h4>
+    <div id="autoStatus">Checking auto-mode...</div>
+    <button id="autoStart">Start Auto-Runner</button>
+    <button id="autoStop">Stop Auto-Runner</button>
+    <hr/>
+    <input id="replyText" placeholder="custom reply text (optional)"/>
+    <label style="font-size:12px;display:block;margin-top:6px;">
+      Resume (optional for Indeed):
+      <input id="resumeFile" type="file" accept=".pdf,.doc,.docx,.txt,.rtf"/>
+    </label>
+    <button id="task-xhs">Run Task: XHS Auto Reply</button>
+    <button id="task-indeed">Run Task: Indeed Apply</button>
+    <hr/>
+    <h4>Vision Integration Tests</h4>
+    <div id="visionStatus">Vision API not tested</div>
+    <button id="testVision">Test Vision API</button>
+    <button id="testIntegration">Run Integration Test</button>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

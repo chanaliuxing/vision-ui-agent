@@ -1,0 +1,24 @@
+{
+  "name": "HP Responder (SQS)",
+  "meta": { "priority": "HIGH" },
+  "start": "wait",
+  "states": {
+    "wait": {
+      "actions": [
+        { "do": "mq.consume", "topic": "device-demo-hp.fifo", "save": "msg" }
+      ],
+      "transitions": [
+        { "if": "msg != None and msg != 'pending'", "go_to": "send" },
+        { "go_to": "wait" }
+      ]
+    },
+    "send": {
+      "actions": [
+        { "do": "set_variable", "name": "last_contact", "value": "Alice" },
+        { "do": "set_variable", "name": "last_text", "value": "处理消息完成" },
+        { "do": "mq.ack", "topic": "device-demo-hp.fifo", "from_var": "msg" }
+      ],
+      "transitions": [ { "go_to": "wait" } ]
+    }
+  }
+}

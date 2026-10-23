@@ -1,0 +1,43 @@
+[14:29:26.610] [INFO] 🚀 Starting DOM→Vision Fallback Integration Test
+[14:29:26.611] [INFO] ============================================================
+[14:29:26.611] [INFO] 🔍 Checking prerequisites...
+[14:29:26.628] [INFO] ✅ Vision API is healthy
+[14:29:26.630] [INFO] ✅ Orchestrator is healthy
+[14:29:26.630] [INFO] ✅ All prerequisites met
+[14:29:26.630] [INFO] 🚀 Setting up Chrome with extension...
+[14:29:27.413] [INFO] ✅ Service Worker loaded: chrome-extension://pldgooalgojpaigkahhoacbbnndjnfdk/sw/bootstrap.js
+[14:29:30.588] [INFO] ✅ Browser setup complete
+[14:29:30.588] [INFO] 🌐 Navigating to test site...
+[14:29:31.752] [INFO] [PAGE] 框架和 SDK 输出的日志默认不展示，可在框架配置文件中设置开启，详见 https://doc.weixin.qq.com/doc/w3_AWkASAb9APAr8IdJI5VS0OyqetUE6?scode=ANAAyQcbAAgB8qKjm9AWkASAb9APA
+[14:29:31.786] [INFO] [PAGE] Error
+[14:29:31.880] [INFO] [PAGE] [CS] Content script loaded for www.xiaohongshu.com
+[14:29:32.075] [INFO] [PAGE] Hydration completed but contains mismatches.
+[14:29:32.153] [INFO] [PAGE] Error
+[14:29:32.155] [INFO] [PAGE] Error
+[14:29:32.156] [INFO] [PAGE] Error
+[14:29:32.415] [INFO] [PAGE] Error
+[14:29:32.533] [INFO] [PAGE] Service Worker registered success with scope: https://www.xiaohongshu.com/
+[14:29:32.612] [INFO] [PAGE] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+[14:29:33.065] [INFO] [PAGE] Error
+[14:29:35.019] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.020] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:29:35.857] [INFO] ✅ Successfully loaded xiaohongshu.com/explore
+[14:29:36.163] [INFO] 📸 Screenshot saved: test-page-loaded.png
+[14:29:37.173] [INFO] [PAGE] Error
+[14:29:38.421] [INFO] [PAGE] Error
+[14:29:39.664] [INFO] [PAGE] Error
+[14:29:40.955] [INFO] [PAGE] Error
+[14:29:41.165] [INFO] 🔍 Testing Vision fallback mechanism...
+[14:29:41.500] [INFO] ✅ Vision API detected elements: confidence=0.915, center=(1140, 608)
+[14:29:41.500] [INFO] 📋 Starting DOM→Vision test workflow...
+[14:29:41.515] [ERROR] ❌ Failed to start workflow: HTTP 500: {"ok":false,"error":"column \"queue\" of relation \"commands\" does not exist"}
+[14:29:41.515] [ERROR] 💥 Test crashed: HTTP 500: {"ok":false,"error":"column \"queue\" of relation \"commands\" does not exist"}
+[14:29:41.515] [INFO] 🧹 Cleaning up...

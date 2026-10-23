@@ -1,0 +1,25 @@
+{
+  "id": "anchor_2bdd910394d0",
+  "fingerprint": "fp_2bdd910394d0_v1",
+  "type": "compound",
+  "descriptors": {
+    "template_hash": "89504e470d0a1a0a...",
+    "orb": {
+      "kpts": 64,
+      "desc_hash": "sha1:78d9cbc2e1896493"
+    },
+    "color_hist": "sha1:78d9cbc2e1896493"
+  },
+  "norm_ref": {
+    "kind": "window",
+    "w": 1954,
+    "h": 1110
+  },
+  "norm_bbox": [
+    0.07347788659430575,
+    0.026727128243661143,
+    0.28024566869042666,
+    0.07834700163420256
+  ],
+  "dom_hints": {}
+}

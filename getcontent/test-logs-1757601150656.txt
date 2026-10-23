@@ -1,0 +1,99 @@
+[14:30:14.936] [INFO] 🚀 Starting DOM→Vision Fallback Integration Test
+[14:30:14.938] [INFO] ============================================================
+[14:30:14.938] [INFO] 🔍 Checking prerequisites...
+[14:30:14.956] [INFO] ✅ Vision API is healthy
+[14:30:14.958] [INFO] ✅ Orchestrator is healthy
+[14:30:14.958] [INFO] ✅ All prerequisites met
+[14:30:14.958] [INFO] 🚀 Setting up Chrome with extension...
+[14:30:15.729] [INFO] ✅ Service Worker loaded: chrome-extension://pldgooalgojpaigkahhoacbbnndjnfdk/sw/bootstrap.js
+[14:30:18.903] [INFO] ✅ Browser setup complete
+[14:30:18.908] [INFO] 🌐 Navigating to test site...
+[14:30:19.928] [INFO] [PAGE] 框架和 SDK 输出的日志默认不展示，可在框架配置文件中设置开启，详见 https://doc.weixin.qq.com/doc/w3_AWkASAb9APAr8IdJI5VS0OyqetUE6?scode=ANAAyQcbAAgB8qKjm9AWkASAb9APA
+[14:30:19.962] [INFO] [PAGE] Error
+[14:30:20.045] [INFO] [PAGE] Error
+[14:30:20.045] [INFO] [PAGE] Error
+[14:30:20.045] [INFO] [PAGE] Error
+[14:30:20.106] [INFO] [PAGE] [CS] Content script loaded for www.xiaohongshu.com
+[14:30:20.262] [INFO] [PAGE] Hydration completed but contains mismatches.
+[14:30:20.332] [INFO] [PAGE] Error
+[14:30:20.332] [INFO] [PAGE] Error
+[14:30:20.598] [INFO] [PAGE] Error
+[14:30:20.611] [INFO] [PAGE] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+[14:30:20.722] [INFO] [PAGE] Service Worker registered success with scope: https://www.xiaohongshu.com/
+[14:30:21.194] [INFO] [PAGE] Error
+[14:30:21.196] [INFO] [PAGE] Error
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_CONNECTION_REFUSED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.977] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:22.978] [INFO] [PAGE] Failed to load resource: net::ERR_FAILED
+[14:30:24.599] [INFO] ✅ Successfully loaded xiaohongshu.com/explore
+[14:30:24.882] [INFO] 📸 Screenshot saved: test-page-loaded.png
+[14:30:25.100] [INFO] [PAGE] Error
+[14:30:27.979] [INFO] [PAGE] Error
+[14:30:29.882] [INFO] 🔍 Testing Vision fallback mechanism...
+[14:30:30.248] [INFO] ✅ Vision API detected elements: confidence=0.892, center=(125, 280)
+[14:30:30.248] [INFO] 📋 Starting DOM→Vision test workflow...
+[14:30:30.264] [INFO] ✅ Workflow started: 2d447c4a-b126-4273-a573-fab6831f68ce (3 steps)
+[14:30:30.265] [INFO] ⏱️ Monitoring workflow execution (timeout: 120s)...
+[14:30:30.270] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:32.097] [INFO] [PAGE] Error
+[14:30:33.286] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:36.290] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:36.357] [INFO] [PAGE] Error
+[14:30:39.092] [INFO] [PAGE] Error
+[14:30:39.295] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:42.298] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:45.312] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:47.359] [INFO] [PAGE] Error
+[14:30:48.315] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:51.320] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:51.477] [INFO] [PAGE] Error
+[14:30:52.855] [INFO] [PAGE] Error
+[14:30:54.323] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:30:56.109] [INFO] [PAGE] Error
+[14:30:56.548] [INFO] [PAGE] Error
+[14:30:56.550] [INFO] [PAGE] Error
+[14:30:57.327] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:00.332] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:03.346] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:06.351] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:09.353] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:12.356] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:15.361] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:18.364] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:21.367] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:24.369] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:27.373] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:30.376] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:33.379] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:36.382] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:39.385] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:42.389] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:45.392] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:48.395] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:51.400] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:54.403] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:31:57.406] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:00.409] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:03.413] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:06.416] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:09.418] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:12.422] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:15.425] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:18.429] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:21.432] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:24.437] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:27.441] [INFO] 📊 Status: running | Steps: 0✅ 0❌ 3⏳ | Artifacts: 0
+[14:32:30.442] [ERROR] ⏰ Workflow monitoring timed out after 120s
+[14:32:30.443] [INFO] 
+📊 TEST RESULTS
+[14:32:30.443] [INFO] ==============================
+[14:32:30.443] [INFO] ❌ DOM→Vision Fallback Test FAILED
+[14:32:30.443] [INFO]    Reason: Execution timeout
+[14:32:30.443] [INFO] 🧹 Cleaning up...

@@ -1,0 +1,55 @@
+# Python caches & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.so
+
+# Virtual environments
+.venv/
+venv/
+myenv/
+ENV/
+env/
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & Local Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.stage3.example
+
+# Runtime output, artifacts, captures, logs
+out/
+artifacts/
+runtime/
+*.log
+*.sqlite3
+.localstack/
+.lockstack/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Heavy Weights (download via scripts/download_weights.sh)
+weights/*.pt
+weights/*.pth
+weights/*.bin
+weights/*.onnx
+
+# Editor & OS artifacts
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db

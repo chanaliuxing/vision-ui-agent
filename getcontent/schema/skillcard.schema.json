@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type":"object",
+  "properties":{
+    "page_signature":{"type":"object"},
+    "selectors":{"type":"object"},
+    "verifiers":{"type":"object"},
+    "bandit_stats":{"type":"object"},
+    "ttl":{"type":"number"}
+  },
+  "required":["page_signature","selectors"]
+}

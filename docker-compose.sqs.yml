@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  localstack:
+    image: localstack/localstack:3
+    ports:
+      - "4566:4566"       # main edge port
+      - "4571:4571"
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "./.localstack:/var/lib/localstack"
+      - "./config/localstack/10-queues.sh:/etc/localstack/init/ready.d/10-queues.sh:ro"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20

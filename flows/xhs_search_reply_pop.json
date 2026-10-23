@@ -1,0 +1,93 @@
+{
+  "start": "open_home",
+  "states": {
+    "open_home": {
+      "actions": [
+        { "do": "open_url", "url": "https://www.xiaohongshu.com/explore", "app": "Google Chrome" },
+        { "do": "sleep_ms", "value": 6000 },
+        {
+          "do": "autostep",
+          "goal": "点击顶部搜索框",
+          "picker": "vision",
+          "pop": "auto",
+          "k": 12,
+          "phase": "navigation",
+          "task_context": "小红书搜索任务：需要找到并点击搜索框开始搜索汽车信息",
+          "verify": { "timeout_ms": 8000, "poll_ms": 600, "rules": [] },
+          "fallback": { "action": "scroll" },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        }
+      ],
+      "on_success": "search"
+    },
+    "search": {
+      "actions": [
+        { "do": "type_text", "text": "温哥华 卖车", "mode": "type" },
+        { "do": "sleep_ms", "value": 1000 },
+        { "do": "type_text", "text": "\n", "mode": "type" },
+        { "do": "sleep_ms", "value": 4000 }
+      ],
+      "on_success": "results"
+    },
+    "results": {
+      "actions": [
+        {
+          "do": "autostep",
+          "goal": "点击第一排第一个（最左上角）搜索结果卡片",
+          "picker": "vision",
+          "pop": "auto",
+          "k": 12,
+          "phase": "content_selection",
+          "task_context": "搜索结果页面：需要精确选择左上角第一个汽车相关的帖子，避免广告和无关内容",
+          "hints": ["选择页面最上方最左侧的第一个帖子", "避免选择下方或右侧的帖子", "选择第一排最左边的内容卡片"],
+          "preferred_classes": ["image", "card", "post"],
+          "negative_classes": ["ad", "banner", "navigation"],
+          "verify": { "timeout_ms": 12000, "poll_ms": 600, "rules": ["page_change"] },
+          "fallback": { "action": "scroll", "clicks": -200 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        }
+      ],
+      "on_success": "comment_section"
+    },
+    "comment_section": {
+      "actions": [
+        { "do": "sleep_ms", "value": 3000 },
+        { "do": "scroll", "clicks": -400 },
+        { "do": "sleep_ms", "value": 2000 },
+        {
+          "do": "autostep", 
+          "goal": "找到评论输入框或评论按钮",
+          "picker": "vision",
+          "pop": "auto",
+          "k": 12,
+          "phase": "interaction_preparation",
+          "task_context": "帖子详情页面：需要找到评论相关的输入区域，准备发布评论",
+          "hints": ["找到评论相关的输入框", "选择可以输入评论的区域"],
+          "preferred_classes": ["input", "textbox", "comment", "reply"],
+          "verify": { "timeout_ms": 8000, "poll_ms": 600, "rules": [] },
+          "fallback": { "action": "scroll", "clicks": -300 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        },
+        { "do": "type_text", "text": "非常好", "mode": "type" },
+        { "do": "sleep_ms", "value": 1000 },
+        {
+          "do": "autostep",
+          "goal": "发送或发布评论",
+          "picker": "vision",
+          "pop": "auto", 
+          "k": 12,
+          "phase": "action_completion",
+          "task_context": "评论发布阶段：需要找到并点击发送/发布按钮完成评论提交",
+          "hints": ["找到发送按钮", "找到发布按钮", "完成评论发布"],
+          "preferred_classes": ["button", "submit", "send", "publish"],
+          "negative_classes": ["cancel", "close", "delete"],
+          "verify": { "timeout_ms": 10000, "poll_ms": 600, "rules": ["appear:toast"] },
+          "fallback": { "action": "scroll", "clicks": -200 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        }
+      ],
+      "on_success": "done"
+    },
+    "done": { "actions": [ { "do": "sleep_ms", "value": 1000 } ] }
+  }
+}

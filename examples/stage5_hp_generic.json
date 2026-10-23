@@ -1,0 +1,40 @@
+{
+  "name": "Chat Responder (HP - Generic)",
+  "meta": { "priority": "HIGH", "resource_lock": "CHAT_UI_${app}" },
+  "start": "wait",
+  "vars": { "app": "wechat", "device_id": "demo" },
+  "states": {
+    "wait": {
+      "actions": [
+        { "do": "mq.consume", "topic": "device-demo-wechat-hp.fifo", "save": "msg" }
+      ],
+      "transitions": [
+        { "if": "@msg != None and @msg != 'pending'", "go_to": "send" },
+        { "go_to": "wait" }
+      ]
+    },
+    "send": {
+      "actions": [
+        { "do": "chat.focus_contact", "name": "@msg['contact_name']" },
+        { "do": "wait_ms", "value": 200 },
+        { "do": "chat.send_text", "text": "@msg['reply_text']" },
+        { "do": "mq.ack", "topic": "device-demo-wechat-hp.fifo", "from_var": "msg" },
+        {
+          "do": "api.upsert_chats",
+          "rows": [
+            {
+              "contact": "@msg['contact_name']",
+              "direction": "OUT",
+              "text": "@msg['reply_text']",
+              "app": "@app",
+              "device_id": "@device_id"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        { "go_to": "wait" }
+      ]
+    }
+  }
+}

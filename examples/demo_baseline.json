@@ -1,0 +1,19 @@
+{
+  "start": "demo",
+  "states": {
+    "demo": {
+      "actions": [
+        {
+          "do": "wait_for_yolo",
+          "targets": [{"class": "window", "confidence": 0.5}],
+          "max_wait": 5
+        }
+      ],
+      "transitions": {
+        "success": "end",
+        "failure": "end"
+      }
+    },
+    "end": {}
+  }
+}

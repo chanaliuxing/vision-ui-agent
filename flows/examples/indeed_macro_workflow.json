@@ -1,0 +1,198 @@
+{
+  "version": "1.3",
+  "start": "init",
+  "features": {
+    "macros": {
+      "enabled": true
+    },
+    "planner": {
+      "strategy": "agentq",
+      "memory": {
+        "rag": true,
+        "k": 5,
+        "use_reflexion": true
+      }
+    }
+  },
+  "vars": {
+    "i": 0,
+    "max_jobs": 10,
+    "index_offset": 0,
+    "apply_texts": ["Apply", "Quick Apply", "Ës3÷"],
+    "applied_count": 0
+  },
+  "states": {
+    "init": {
+      "description": "Initialize and get page state",
+      "actions": [
+        {
+          "do": "ext.get_pagestate",
+          "save": "ps"
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@ps.host.includes('indeed.com')",
+          "go_to": "job_loop"
+        },
+        {
+          "else_go_to": "error"
+        }
+      ]
+    },
+    "job_loop": {
+      "description": "Main job application loop using macro",
+      "actions": [
+        {
+          "do": "macro.run",
+          "name": "apply_click_flow",
+          "args": {
+            "index_offset": "@index_offset",
+            "apply_texts": "@apply_texts"
+          },
+          "save": "macro_result"
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@macro_result.ok == true",
+          "go_to": "application_success"
+        },
+        {
+          "else_go_to": "fallback_manual"
+        }
+      ]
+    },
+    "application_success": {
+      "description": "Handle successful application",
+      "actions": [
+        {
+          "do": "increment_variable",
+          "name": "applied_count"
+        },
+        {
+          "do": "increment_variable",
+          "name": "i"
+        },
+        {
+          "do": "sleep_ms",
+          "value": 2000
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@applied_count >= @max_jobs",
+          "go_to": "completed"
+        },
+        {
+          "if": "@i < @ps.lists[0].itemRects.length",
+          "go_to": "job_loop"
+        },
+        {
+          "else_go_to": "scroll_next_page"
+        }
+      ]
+    },
+    "fallback_manual": {
+      "description": "Fallback to manual interaction when macro fails",
+      "actions": [
+        {
+          "do": "wheel_coordinates",
+          "args": {
+            "at_bbox": "@ps.panes.left.rect",
+            "amount": -800
+          }
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "until": {
+              "type": "ext.wait_quiet",
+              "timeout_ms": 3000
+            }
+          }
+        },
+        {
+          "do": "ext.get_pagestate",
+          "save": "ps"
+        },
+        {
+          "do": "increment_variable",
+          "name": "i"
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@i < @ps.lists[0].itemRects.length",
+          "go_to": "job_loop"
+        },
+        {
+          "else_go_to": "scroll_next_page"
+        }
+      ]
+    },
+    "scroll_next_page": {
+      "description": "Scroll to load more jobs",
+      "actions": [
+        {
+          "do": "wheel_coordinates",
+          "args": {
+            "at_bbox": "@ps.panes.left.rect",
+            "amount": -1200
+          }
+        },
+        {
+          "do": "sleep_ms",
+          "value": 3000
+        },
+        {
+          "do": "ext.get_pagestate",
+          "save": "ps"
+        },
+        {
+          "do": "set_variable",
+          "name": "i",
+          "value": 0
+        }
+      ],
+      "transitions": [
+        {
+          "if": "@ps.lists[0].itemRects.length > 0",
+          "go_to": "job_loop"
+        },
+        {
+          "else_go_to": "completed"
+        }
+      ]
+    },
+    "completed": {
+      "description": "Workflow completed successfully",
+      "actions": [
+        {
+          "do": "log_event",
+          "event": "workflow_completed",
+          "data": {
+            "applied_count": "@applied_count",
+            "total_iterations": "@i",
+            "success": true
+          }
+        }
+      ],
+      "final": true
+    },
+    "error": {
+      "description": "Error state for unsupported pages",
+      "actions": [
+        {
+          "do": "log_event",
+          "event": "workflow_error",
+          "data": {
+            "error": "Unsupported page",
+            "host": "@ps.host"
+          }
+        }
+      ],
+      "final": true
+    }
+  }
+}

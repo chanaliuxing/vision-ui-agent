@@ -1,0 +1,51 @@
+{
+  "id": "ext.click",
+  "title": "Click element",
+  "description": "Clicks on a web element using various selectors",
+  "schema": {
+    "type": "object",
+    "required": ["selector"],
+    "properties": {
+      "selector": {
+        "type": "string",
+        "description": "CSS selector, XPath, or text content"
+      },
+      "selector_type": {
+        "enum": ["css", "xpath", "text", "id", "class"],
+        "default": "css",
+        "description": "Type of selector"
+      },
+      "wait_timeout_ms": {
+        "type": "integer",
+        "default": 5000,
+        "minimum": 100,
+        "maximum": 30000,
+        "description": "Maximum wait time for element"
+      },
+      "click_type": {
+        "enum": ["single", "double", "right"],
+        "default": "single",
+        "description": "Type of click"
+      },
+      "offset": {
+        "type": "object",
+        "properties": {
+          "x": {"type": "integer"},
+          "y": {"type": "integer"}
+        },
+        "description": "Click offset from element center"
+      }
+    }
+  },
+  "capabilities": ["web"],
+  "prerequisites": ["ext.open_url"],
+  "cost_estimate": {
+    "llm_tokens": 0,
+    "api_calls": 0,
+    "execution_ms": 500
+  },
+  "platforms": ["windows", "mac", "linux"],
+  "version": "1.0.0",
+  "author": "AutoWorkflow",
+  "tags": ["interaction", "click", "web"]
+}

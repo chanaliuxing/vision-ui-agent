@@ -1,0 +1,58 @@
+{
+  "name": "go to facebook to say hi to jack",
+  "description": "Open Facebook, find Jack, send hi.",
+  "version": "1.0.0",
+  "globals": {
+    "device_target": "mac",
+    "llm_budget": {
+      "max_calls": 1,
+      "max_tokens": 800
+    },
+    "auto_promote_on_success": false
+  },
+  "start": "init",
+  "steps": [
+    {
+      "id": "init",
+      "name": "Initialize",
+      "type": "action",
+      "uses": "ext.open_url",
+      "params": {
+        "url": "https://facebook.com",
+        "app": "Google Chrome",
+        "wait_dom_quiet_ms": 1200
+      }
+    },
+    {
+      "id": "process",
+      "name": "Process",
+      "type": "action",
+      "uses": "ext.click",
+      "params": {
+        "selector": "[data-testid='royal_login_button']",
+        "wait_timeout_ms": 5000
+      }
+    },
+    {
+      "id": "finalize",
+      "name": "Finalize",
+      "type": "action",
+      "uses": "llm.plan",
+      "params": {
+        "goal": "Say 'hi' to Jack in the chat window",
+        "model": "gpt-4",
+        "max_tokens": 500
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "init",
+      "to": "process"
+    },
+    {
+      "from": "process",
+      "to": "finalize"
+    }
+  ]
+}

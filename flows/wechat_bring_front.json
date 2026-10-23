@@ -1,0 +1,55 @@
+{
+  "version": "1.1",
+  "name": "wechat_bring_front_v3",
+  "description": "Bring target app window to front (macOS/Windows). Try activate with multiple names; on failure, launch, then find unread (red dot) and click.",
+  "autofix": { "mode": "auto_promote_on_success", "limits": { "max_patches_per_run": 2 } },
+  "vars": {
+    "capture": { "mode": "active_window" }
+  },
+  "start": "focus_app",
+  "states": {
+    "focus_app": {
+      "actions": [
+        { "do": "os.activate_app", "names": ["WeChat", "微信"] },
+        { "do": "instr.key", "key": "WaitQuiet" },
+        { "do": "screenshot", "save_as": "focus_step_{n}.png" }
+      ],
+      "on_success": "open_unread",
+      "on_error": "launch_app"
+    },
+
+    "launch_app": {
+      "actions": [
+        { "do": "os.launch_app", "names": ["WeChat", "微信"] },
+        { "do": "instr.key", "key": "WaitQuiet" },
+        { "do": "screenshot", "save_as": "focus_step_{n}.png" }
+      ],
+      "on_success": "open_unread",
+      "on_error": "focus_fail"
+    },
+
+    "open_unread": {
+      "description": "Find the left-side chat with unread red dot/number and click it.",
+      "actions": [
+        {
+          "do": "autostep",
+          "goal": "点击微信网页版左侧最近含红色数字或红点/未读的绿色微信图标，一般在左侧栏靠上位置，这个是微信打开新消息的图标。",
+          "picker": "vision",
+          "executor": "vision",
+          "k": 12,
+          "verify": { "timeout_ms": 8000, "poll_ms": 600, "rules": ["page_change"] },
+          "fallback": { "action": "scroll", "clicks": -200 },
+          "save": { "shot": "step_{n}.png", "yolo": "yolo_{n}.json", "picker": "picker_{n}.json" }
+        },
+        { "do": "instr.key", "key": "WaitQuiet" }
+      ],
+      "on_success": null
+    },
+
+    "focus_fail": {
+      "actions": [
+        { "do": "screenshot", "save_as": "focus_fail_{n}.png" }
+      ]
+    }
+  }
+}

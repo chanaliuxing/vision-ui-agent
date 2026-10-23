@@ -1,0 +1,57 @@
+{
+  "page_signature": {"host": "example.com", "path_hint": "/test"},
+  "goals": ["test_advanced_selectors"],
+  "frames": [
+    {
+      "queries": [
+        {
+          "id": "main_content",
+          "selector": {"css": "main, #content, [role='main']"},
+          "verify": {"min_count": 1}
+        },
+        {
+          "id": "job_anchor",
+          "selector": {
+            "by_anchor": {
+              "anchor_text": ["Job Description", "Full job description", "职位描述"],
+              "container_css": "main, .content",
+              "descendant_css": "div, section, article"
+            }
+          },
+          "verify": {"min_count": 1},
+          "fallback": [
+            {"use": "network_sniff", "pattern": "job|description|position"}
+          ]
+        },
+        {
+          "id": "messages",
+          "iterate": {
+            "within": "main_content",
+            "item_css": "div.message, li.msg, [data-role='message']",
+            "filters": [
+              {"has_class_includes": ["incoming", "left", "other"]},
+              {"not_has_class": ["outgoing", "right", "me", "self"]}
+            ],
+            "fields": [
+              {"name": "text", "type": "innerText"},
+              {"name": "images", "type": "queryAttrAll", "css": "img", "attr": "src"},
+              {"name": "timestamp", "type": "closestText"}
+            ],
+            "order_by": {"rule": "dom_order"},
+            "take": {"last_n": 5}
+          },
+          "verify": {"min_count": 1, "sample_contains_any": ["hello", "hi", "message"]}
+        },
+        {
+          "id": "relative_test",
+          "selector": {
+            "relative_to": "job_anchor",
+            "css": "p, div"
+          },
+          "extract": {"type": "innerHTML"},
+          "verify": {"min_length": 100}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "page_signature": { "host": "xhs.", "path_hint": "/explore/|/discovery/item/" },
+  "vars": {},
+  "steps": [
+    { "wait": { "selector": "main, #root, [role='main'], article", "ms": 4000 }},
+
+    {
+      "emit": {
+        "name": "post",
+        "props": [
+          { "name": "title",        "selector": "h1, h2[role='heading'], .title, [data-role='title']", "type": "innerText" },
+          { "name": "author",       "selector": ".author, .nickname, [data-author], a[href*='/user/']", "type": "innerText" },
+          { "name": "profile_url",  "selector": "a[href*='/user/'], a[href*='/profile']", "type": "attr", "attr": "href" },
+          { "name": "content",      "selector": ".content, article, [data-role='content'], [class*='note-text']", "type": "innerText" }
+        ]
+      }
+    },
+
+    {
+      "emit": {
+        "name": "comments",
+        "list": {
+          "within": "main, #root, [role='main']",
+          "item_css": ".comment, li:has([class*='comment']), [data-role='comment']",
+          "fields": [
+            { "name": "user",  "type": "queryText", "css": ".author, .nickname, [data-author], a[href*='/user/']" },
+            { "name": "text",  "type": "innerText" },
+            { "name": "ts",    "type": "queryText", "css": "time, .timestamp, .time" }
+          ],
+          "take": { "last_n": 40 }
+        }
+      }
+    },
+
+    {
+      "verify": {
+        "selector": ".content, article, [data-role='content'], [class*='note-text']",
+        "min_length": 30
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,49 @@
+name: apply_click_flow
+version: 1.0.0
+host: ca.indeed.com
+title: Click & Apply current job (left pane ’ right detail)
+description: |
+  Scroll to reveal i-th item in left pane, click it, wait for quiet, find Apply and click.
+  This macro automates the common pattern of job application on Indeed.
+params:
+  index_offset:
+    type: integer
+    default: 0
+    min: -2
+    max: 2
+    description: "Offset to apply to the current index when selecting job items"
+  apply_texts:
+    type: array
+    default: ["Apply", "Quick Apply", "Ës3÷"]
+    items:
+      type: string
+    description: "List of text patterns to look for in apply buttons"
+constraints:
+  must_stay_in_host: indeed.com
+  no_dom_click: true
+  max_steps: 5
+microplan:
+  steps:
+    - do: wheel_coordinates
+      args:
+        at_bbox: "@ps.panes.left.rect"
+        amount: -600
+      expect: "left list visible"
+    - do: click_coordinates
+      args:
+        bbox: "@ps.lists[0].itemRects[@i + @index_offset]"
+      expect: "right pane updates"
+    - do: wait_for
+      args:
+        until:
+          type: "ext.wait_quiet"
+          timeout_ms: 6000
+    - do: ext.extract
+      args:
+        mode: "find_button_bbox"
+        text_any_of: "@apply_texts"
+      expect: "apply located"
+    - do: click_coordinates
+      args:
+        bbox: "@last_found_bbox"
+      expect: "apply clicked"

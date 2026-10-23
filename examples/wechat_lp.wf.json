@@ -1,0 +1,25 @@
+{
+  "version": "1.1",
+  "vars": { "app": "wechat_desktop", "device_id": "${runtime.device_id}" },
+  "start": "poll",
+  "states": {
+    "poll": {
+      "actions": [ { "do": "chat.find_unread", "save": "ur" } ],
+      "transitions": [
+        { "if": "@ur['has_unread']==true", "go_to": "open" },
+        { "else_go_to": "sleep" }
+      ]
+    },
+    "sleep": { "actions": [ { "do": "sleep_ms", "value": 1200 } ], "on_success": "poll" },
+    "open": {
+      "actions": [
+        { "do": "chat.open_latest_unread" },
+        { "do": "chat.capture_visible", "save": "cap" },
+        { "do": "ocr.run", "roi": "@cap['bubbles_roi']", "lang": "chi_sim+eng", "psm": 6, "cache": true, "save": "text" },
+        { "do": "llm.submit", "job":"chat_reply", "prompt_pack":"wechat.sales.reply.v1", "schema":"WeChatReplyV1",
+          "provider_hint":"AUTO", "inputs": { "app":"wechat", "new_messages_text":"@text" }, "save":"llm_out" }
+      ],
+      "on_success": "poll"
+    }
+  }
+}

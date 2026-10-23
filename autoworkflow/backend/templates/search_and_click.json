@@ -1,0 +1,98 @@
+{
+  "name": "搜索并点击",
+  "description": "在页面搜索特定内容并点击结果",
+  "version": "1.0.0",
+  "category": "common",
+  "parameters": {
+    "search_query": {
+      "type": "string",
+      "description": "搜索关键词",
+      "default": "示例搜索"
+    },
+    "target_url": {
+      "type": "string",
+      "description": "目标网站URL",
+      "default": "https://www.google.com"
+    },
+    "result_index": {
+      "type": "number",
+      "description": "点击第几个搜索结果(从0开始)",
+      "default": 0
+    }
+  },
+  "workflow": {
+    "name": "{{name}} - {{search_query}}",
+    "version": "1.0.0",
+    "start": "open_site",
+    "steps": [
+      {
+        "id": "open_site",
+        "type": "action",
+        "uses": "ext.open_url",
+        "params": {
+          "url": "{{target_url}}"
+        }
+      },
+      {
+        "id": "find_search_box",
+        "type": "action",
+        "uses": "vision.find_element_with_image_check",
+        "params": {
+          "method": "text",
+          "text": "搜索"
+        }
+      },
+      {
+        "id": "input_search",
+        "type": "action",
+        "uses": "ext.type",
+        "params": {
+          "ref": "${outputs.find_search_box.center}",
+          "text": "{{search_query}}"
+        }
+      },
+      {
+        "id": "submit_search",
+        "type": "action",
+        "uses": "ext.key",
+        "params": {
+          "key": "Return"
+        }
+      },
+      {
+        "id": "wait_results",
+        "type": "action",
+        "uses": "ext.wait",
+        "params": {
+          "seconds": 2
+        }
+      },
+      {
+        "id": "find_result",
+        "type": "action",
+        "uses": "vision.find_element_with_image_check",
+        "params": {
+          "method": "index",
+          "index": "{{result_index}}",
+          "target_class": "search_result"
+        }
+      },
+      {
+        "id": "click_result",
+        "type": "action",
+        "uses": "ext.click",
+        "params": {
+          "ref": "${outputs.find_result.center}"
+        }
+      }
+    ],
+    "edges": [
+      {"from": "open_site", "to": "find_search_box"},
+      {"from": "find_search_box", "to": "input_search"},
+      {"from": "input_search", "to": "submit_search"},
+      {"from": "submit_search", "to": "wait_results"},
+      {"from": "wait_results", "to": "find_result"},
+      {"from": "find_result", "to": "click_result"}
+    ]
+  }
+}

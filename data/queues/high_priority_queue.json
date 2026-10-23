@@ -1,0 +1,153 @@
+{
+  "messages": {
+    "d447f9df-414d-4cb2-92a3-049bc9834350": {
+      "message_id": "d447f9df-414d-4cb2-92a3-049bc9834350",
+      "content": {
+        "task_id": "hp_0",
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:23:31.608676",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "completed",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:09.936090"
+    },
+    "725c7bc1-3bae-4216-a0cf-1c1b161e409b": {
+      "message_id": "725c7bc1-3bae-4216-a0cf-1c1b161e409b",
+      "content": {
+        "task_id": "hp_1",
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:23:31.608790",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "completed",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:09.936840"
+    },
+    "0a43b42b-45f8-4a7f-ab60-36d880b234e5": {
+      "message_id": "0a43b42b-45f8-4a7f-ab60-36d880b234e5",
+      "content": {
+        "test": "data",
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:09.934312",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "completed",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:09.937415"
+    },
+    "5a0d40fc-70a6-4f14-bcf0-cb7a0807f5bf": {
+      "message_id": "5a0d40fc-70a6-4f14-bcf0-cb7a0807f5bf",
+      "content": {
+        "order": 0,
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:16.537342",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "2839f540-823e-4eec-9807-18b352c6f403": {
+      "message_id": "2839f540-823e-4eec-9807-18b352c6f403",
+      "content": {
+        "order": 1,
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:16.537736",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "e7fcb8f2-555b-4ceb-9cc7-227ad2eb276a": {
+      "message_id": "e7fcb8f2-555b-4ceb-9cc7-227ad2eb276a",
+      "content": {
+        "order": 2,
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": "test_group",
+      "created_at": "2025-09-17T01:24:16.538037",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "dbf34fcb-5797-4557-a57d-436f37d0e181": {
+      "message_id": "dbf34fcb-5797-4557-a57d-436f37d0e181",
+      "content": {
+        "test": "hp",
+        "task_type": "high_priority"
+      },
+      "priority": 3,
+      "queue_name": "high_priority_queue",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:23.115123",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    }
+  },
+  "pending_queues": {
+    "HIGH": [
+      "5a0d40fc-70a6-4f14-bcf0-cb7a0807f5bf",
+      "2839f540-823e-4eec-9807-18b352c6f403",
+      "e7fcb8f2-555b-4ceb-9cc7-227ad2eb276a",
+      "dbf34fcb-5797-4557-a57d-436f37d0e181"
+    ],
+    "CRITICAL": []
+  },
+  "group_queues": {
+    "test_group": []
+  },
+  "group_processing": {},
+  "dedup_cache": {},
+  "dedup_ttl": {},
+  "saved_at": "2025-09-17T01:24:23.115214"
+}

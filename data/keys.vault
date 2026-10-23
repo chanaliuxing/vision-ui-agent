@@ -1,0 +1,133 @@
+{
+  "keys": [
+    {
+      "key_id": "gemini_gemini-1.5-flash_1758097130_5d2c6376",
+      "provider": "gemini",
+      "model": "gemini-1.5-flash",
+      "encrypted_key": "gAAAAABoym7qHY3ZfCec8Ciijp3Xcr5PTAyWJLW-i5bRJ9PaZhPtGt7rFwKSQIwSqCUlFnP4FW0E2Nbx5K2egJl2NQFbFpKVYKRhuZbg40128Ux8SX8v2vg=",
+      "created_at": "2025-09-17T01:18:50.195058",
+      "expires_at": null,
+      "usage_count": 0,
+      "last_used": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "is_active": true,
+      "tags": []
+    },
+    {
+      "key_id": "gemini_gemini-1.5-flash_1758097130_a8127b92",
+      "provider": "gemini",
+      "model": "gemini-1.5-flash",
+      "encrypted_key": "gAAAAABoym7q7Uf5Y_7fMj_7plw0n2TupSaFqMew83cjIzXFIf8bW3nO2LhXzpg-YiHBzSm8mh37gwS-2ckRCUVqekf0-c4m0A==",
+      "created_at": "2025-09-17T01:18:50.468844",
+      "expires_at": null,
+      "usage_count": 0,
+      "last_used": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "is_active": true,
+      "tags": []
+    },
+    {
+      "key_id": "gemini_gemini-1.5-flash_1758097130_f55f0d19",
+      "provider": "gemini",
+      "model": "gemini-1.5-flash",
+      "encrypted_key": "gAAAAABoym7qZ4MTmjIWlvw6Jrs42tHRSd-tO8Sv0IFe3AeyzzcA4z6xpNFK80jzwQ-EkWSQ0mhdDF65bsUm4eKOHuqjmMSCEw2YcKAfar11v0_HYS8DpvY=",
+      "created_at": "2025-09-17T01:18:50.470849",
+      "expires_at": null,
+      "usage_count": 0,
+      "last_used": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "is_active": true,
+      "tags": []
+    },
+    {
+      "key_id": "gemini_gemini-1.5-flash_1758097138_d45c3288",
+      "provider": "gemini",
+      "model": "gemini-1.5-flash",
+      "encrypted_key": "gAAAAABoym7ycAvoI1Hp3jQPO_CpjXnO7BhJI1B7YTm_3EsbAfupNg8vO_Z5uew0Y5A7Dbfh9uos5jNQs1BjPi-8C_0YPhGhNwtFgB3rx9shbFyNQJho4QE=",
+      "created_at": "2025-09-17T01:18:58.845663",
+      "expires_at": null,
+      "usage_count": 0,
+      "last_used": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "is_active": true,
+      "tags": []
+    },
+    {
+      "key_id": "gemini_gemini-1.5-flash_1758097139_19f8c8dd",
+      "provider": "gemini",
+      "model": "gemini-1.5-flash",
+      "encrypted_key": "gAAAAABoym7zOOO3oFPCxeFX4wKZFQfDvS_Bn8pNZasUwSqPhhMlwStjn3eLh0PVFfWkHpDBVvAbpX5ycmjMPnkL6GjONbsOvA==",
+      "created_at": "2025-09-17T01:18:59.039146",
+      "expires_at": null,
+      "usage_count": 0,
+      "last_used": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "is_active": true,
+      "tags": []
+    },
+    {
+      "key_id": "gemini_gemini-1.5-flash_1758097139_cf55e374",
+      "provider": "gemini",
+      "model": "gemini-1.5-flash",
+      "encrypted_key": "gAAAAABoym7zWejccZVPUCR0ODCLD8Tc1SObkPbaTGW9pnSvcStE3pm0myijBO-BqvgLKuCAz3z2uysbAlaV7eN3aY-hCl65hQPltshgZ1wDn9hsuAHxopk=",
+      "created_at": "2025-09-17T01:18:59.041193",
+      "expires_at": null,
+      "usage_count": 0,
+      "last_used": null,
+      "daily_limit": null,
+      "monthly_limit": null,
+      "is_active": true,
+      "tags": []
+    }
+  ],
+  "usage_stats": {
+    "gemini_gemini-1.5-flash_1758097130_5d2c6376": {
+      "daily_usage": {},
+      "monthly_usage": {},
+      "total_requests": 0,
+      "total_tokens": 0,
+      "last_reset": "2025-09-17T01:18:50.195071"
+    },
+    "gemini_gemini-1.5-flash_1758097130_a8127b92": {
+      "daily_usage": {},
+      "monthly_usage": {},
+      "total_requests": 0,
+      "total_tokens": 0,
+      "last_reset": "2025-09-17T01:18:50.468850"
+    },
+    "gemini_gemini-1.5-flash_1758097130_f55f0d19": {
+      "daily_usage": {},
+      "monthly_usage": {},
+      "total_requests": 0,
+      "total_tokens": 0,
+      "last_reset": "2025-09-17T01:18:50.470854"
+    },
+    "gemini_gemini-1.5-flash_1758097138_d45c3288": {
+      "daily_usage": {},
+      "monthly_usage": {},
+      "total_requests": 0,
+      "total_tokens": 0,
+      "last_reset": "2025-09-17T01:18:58.845674"
+    },
+    "gemini_gemini-1.5-flash_1758097139_19f8c8dd": {
+      "daily_usage": {},
+      "monthly_usage": {},
+      "total_requests": 0,
+      "total_tokens": 0,
+      "last_reset": "2025-09-17T01:18:59.039153"
+    },
+    "gemini_gemini-1.5-flash_1758097139_cf55e374": {
+      "daily_usage": {},
+      "monthly_usage": {},
+      "total_requests": 0,
+      "total_tokens": 0,
+      "last_reset": "2025-09-17T01:18:59.041200"
+    }
+  },
+  "saved_at": "2025-09-17T01:18:59.041228"
+}

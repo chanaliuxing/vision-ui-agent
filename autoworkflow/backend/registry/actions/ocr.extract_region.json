@@ -1,0 +1,22 @@
+{
+  "$id": "ocr.extract_region.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ocr.extract_region",
+  "type": "object",
+  "oneOf": [
+    { "required": ["region"] },
+    { "required": ["ref"] }
+  ],
+  "properties": {
+    "region": {
+      "type": "object",
+      "properties": { "x":{"type":"number"}, "y":{"type":"number"}, "w":{"type":"number"}, "h":{"type":"number"} },
+      "required": ["x","y","w","h"],
+      "additionalProperties": false
+    },
+    "ref": { "type":"string", "description":"如 ${outputs.find_btn.bbox}" },
+    "backend": { "enum": ["auto","paddle","tesseract"], "default": "auto" },
+    "lang": { "type": "string", "default": "en" }
+  },
+  "additionalProperties": false
+}

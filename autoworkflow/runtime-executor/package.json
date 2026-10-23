@@ -1,0 +1,55 @@
+{
+  "name": "@autoworkflow/runtime-executor",
+  "version": "1.0.0",
+  "description": "M3: Runtime Executor + Chrome Extension Bridge - Hybrid execution engine with DOM-first and Vision fallback",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "automation",
+    "workflow",
+    "execution",
+    "vision",
+    "dom",
+    "chrome-extension",
+    "hybrid"
+  ],
+  "author": "AutoWorkflow Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "helmet": "^7.2.0",
+    "morgan": "^1.10.1",
+    "puppeteer": "^21.5.2",
+    "sharp": "^0.32.6",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^20.9.0",
+    "@types/ws": "^8.5.9",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "eslint": "^8.54.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.2",
+    "vitest": "^0.34.6"
+  }
+}

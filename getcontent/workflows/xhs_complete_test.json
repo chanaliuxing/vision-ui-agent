@@ -1,0 +1,238 @@
+{
+  "name": "xiaohongshu_complete_e2e_test",
+  "description": "Complete end-to-end test of xiaohongshu.com automation with DOM-first + Vision fallback",
+  "start": "navigation",
+  "version": "2.0",
+  "states": {
+    "navigation": {
+      "description": "Navigate to xiaohongshu.com and handle login modal",
+      "actions": [
+        {
+          "do": "open_url",
+          "args": {
+            "url": "https://www.xiaohongshu.com/explore"
+          },
+          "description": "Navigate to XHS explore page"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "body",
+            "timeout_ms": 8000
+          },
+          "description": "Wait for page to load"
+        },
+        {
+          "do": "capture_snapshot",
+          "args": {
+            "name": "initial_page_load"
+          },
+          "description": "Capture initial page state"
+        }
+      ],
+      "next": "search_flow"
+    },
+    
+    "search_flow": {
+      "description": "Search for content using DOM-first approach with vision fallback",
+      "actions": [
+        {
+          "do": "type",
+          "args": {
+            "selector": "#search-input, input[placeholder*='搜索'], input[placeholder*='登录探索'], .search-input input",
+            "text": "海边穿搭",
+            "clear": true,
+            "enter": true
+          },
+          "fallback": {
+            "vision_click": {
+              "label": "search_box",
+              "description": "Click search input using vision"
+            }
+          },
+          "description": "Type search term - DOM first, vision fallback"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "[data-note-id], .note-item, .feed-item, .note, a[href*='/explore/']",
+            "timeout_ms": 12000
+          },
+          "verify": {
+            "rules": ["dom_count>=3"]
+          },
+          "description": "Wait for search results to appear"
+        },
+        {
+          "do": "capture_snapshot", 
+          "args": {
+            "name": "search_results"
+          },
+          "description": "Capture search results"
+        }
+      ],
+      "next": "content_interaction"
+    },
+
+    "content_interaction": {
+      "description": "Interact with content items and collect data",
+      "actions": [
+        {
+          "do": "click_nth_item",
+          "args": {
+            "list_selector": "[data-note-id], .note-item, .feed-item, .note, a[href*='/explore/']",
+            "index": 1,
+            "wait_after": 3000
+          },
+          "fallback": {
+            "vision_click": {
+              "label": "first_post",
+              "description": "Click first post using vision"
+            }
+          },
+          "description": "Click on first search result"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "body",
+            "timeout_ms": 8000
+          },
+          "description": "Wait for post page to load"
+        },
+        {
+          "do": "capture_snapshot",
+          "args": {
+            "name": "post_detail_page"
+          },
+          "description": "Capture post detail page"
+        },
+        {
+          "do": "scrape_text",
+          "args": {
+            "container": "body",
+            "selectors": [
+              ".note-detail .content",
+              ".note-content",
+              "[class*='note'] [class*='content']",
+              "[class*='detail'] [class*='text']",
+              "article",
+              "main",
+              ".content"
+            ],
+            "max_length": 2000
+          },
+          "description": "Scrape post content"
+        }
+      ],
+      "next": "comment_collection"
+    },
+
+    "comment_collection": {
+      "description": "Collect comments and user interactions",
+      "actions": [
+        {
+          "do": "scroll_and_collect",
+          "args": {
+            "container": "body",
+            "comment_selectors": [
+              "[class*='comment']",
+              "[class*='Comment']", 
+              "[data-comment-id]",
+              ".comment",
+              "[role='listitem']",
+              "li"
+            ],
+            "scroll_count": 3,
+            "scroll_pause_ms": 1500
+          },
+          "description": "Scroll and collect comments"
+        },
+        {
+          "do": "capture_snapshot",
+          "args": {
+            "name": "comments_collected"
+          },
+          "description": "Capture comments state"
+        }
+      ],
+      "next": "data_compilation"
+    },
+
+    "data_compilation": {
+      "description": "Compile and save collected data",
+      "actions": [
+        {
+          "do": "save_text",
+          "args": {
+            "path": "xhs/complete_test_results.txt",
+            "include_metadata": true
+          },
+          "description": "Save all collected text data"
+        },
+        {
+          "do": "save_snapshots",
+          "args": {
+            "path": "xhs/snapshots/"
+          },
+          "description": "Save all captured snapshots"
+        },
+        {
+          "do": "generate_report",
+          "args": {
+            "path": "xhs/test_report.json",
+            "include_stats": true
+          },
+          "description": "Generate comprehensive test report"
+        }
+      ],
+      "next": "verification"
+    },
+
+    "verification": {
+      "description": "Verify workflow completion and data quality",
+      "actions": [
+        {
+          "do": "verify_artifacts",
+          "args": {
+            "required_files": [
+              "xhs/complete_test_results.txt",
+              "xhs/test_report.json"
+            ],
+            "min_file_size": 100
+          },
+          "description": "Verify all artifacts were created"
+        },
+        {
+          "do": "log_success",
+          "args": {
+            "message": "XHS complete E2E test workflow finished successfully"
+          },
+          "description": "Log successful completion"
+        }
+      ]
+    }
+  },
+  
+  "metadata": {
+    "created_at": "2025-09-11",
+    "target_sites": ["xiaohongshu.com"],
+    "expected_artifacts": [
+      "xhs/complete_test_results.txt",
+      "xhs/test_report.json",
+      "xhs/snapshots/"
+    ],
+    "estimated_duration_seconds": 180,
+    "requires_vision_fallback": true,
+    "automation_type": "dom_first_vision_fallback",
+    "test_objectives": [
+      "Navigation and page loading",
+      "Search functionality (DOM + vision)",
+      "Content interaction and clicking",
+      "Data scraping and collection", 
+      "Comment harvesting",
+      "Artifact generation and storage",
+      "End-to-end workflow orchestration"
+    ]
+  }
+}

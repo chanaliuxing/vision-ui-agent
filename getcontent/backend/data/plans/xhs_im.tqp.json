@@ -1,0 +1,49 @@
+{
+  "page_signature": { "host": "xhs.com", "path_hint": "/im" },
+  "vars": {
+    "reply_text": "你好～已收到你的消息，我们尽快回复你哈！"
+  },
+  "steps": [
+    { "wait": { "selector": "main, #root, [role='main']", "ms": 3000 }},
+
+    {
+      "slot": "input",
+      "candidates": ["textarea[placeholder*='回复']", "textarea", "div[contenteditable='true']"],
+      "action": { "type": "type", "text": "{{reply_text}}", "replace": true },
+      "retry": { "attempts": 2, "base_ms": 300 },
+      "post_verify": { "selector": "textarea, div[contenteditable='true']", "min_length": 3 }
+    },
+    {
+      "slot": "send",
+      "candidates": ["button[aria-label*='发送']", "button:has(svg[aria-label*='send'])", "button.send", ".btn-send"],
+      "action": { "type": "click" },
+      "retry": { "attempts": 2, "base_ms": 300 },
+      "await_network_after": { "pattern": "message|conversation", "timeoutMs": 3000, "windowMs": 600 }
+    },
+    { "wait": { "ms": 600 }},
+
+    {
+      "emit": {
+        "name": "messages",
+        "list": {
+          "within": "main, #root, [role='main']",
+          "item_css": "div.message, li.msg, [data-role='message']",
+          "fields": [
+            { "name": "dir", "type": "queryAttr", "css": ":scope", "attr": "class" },
+            { "name": "text", "type": "innerText" },
+            { "name": "img", "type": "queryAttr", "css": "img", "attr": "src" },
+            { "name": "ts", "type": "queryText", "css": "time, .ts, .timestamp" }
+          ],
+          "take": { "last_n": 5 }
+        }
+      }
+    },
+
+    {
+      "verify": {
+        "selector": ".message.outgoing:last-child, .msg.right:last-child, [data-role='message'].outgoing:last-child",
+        "sample_contains_any": ["收到","回复","你好"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "messages": {
+    "606f2366-44fe-49ef-bc26-a806666f862f": {
+      "message_id": "606f2366-44fe-49ef-bc26-a806666f862f",
+      "content": {
+        "task": "lp_low"
+      },
+      "priority": 1,
+      "queue_name": "lp_test",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:05.221715",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "processing",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:05.222853"
+    },
+    "272490d8-3d22-4bc7-8392-90a529b6e611": {
+      "message_id": "272490d8-3d22-4bc7-8392-90a529b6e611",
+      "content": {
+        "task": "lp_high"
+      },
+      "priority": 3,
+      "queue_name": "lp_test",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:05.221865",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "processing",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:05.222564"
+    },
+    "c2f9d16a-afc5-4fa7-94a0-a3665ffcdc33": {
+      "message_id": "c2f9d16a-afc5-4fa7-94a0-a3665ffcdc33",
+      "content": {
+        "task": "lp_normal"
+      },
+      "priority": 2,
+      "queue_name": "lp_test",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:05.221987",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "processing",
+      "last_error": null,
+      "processing_started_at": "2025-09-17T01:24:05.222712"
+    },
+    "a56fc399-fcec-4fe0-9041-fd005bc05550": {
+      "message_id": "a56fc399-fcec-4fe0-9041-fd005bc05550",
+      "content": {
+        "task": "lp_low"
+      },
+      "priority": 1,
+      "queue_name": "lp_test",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:23.120322",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "e3eaaa1e-2adb-41da-a45b-8397afeb2d78": {
+      "message_id": "e3eaaa1e-2adb-41da-a45b-8397afeb2d78",
+      "content": {
+        "task": "lp_high"
+      },
+      "priority": 3,
+      "queue_name": "lp_test",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:23.120480",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    },
+    "52c141f6-bcc3-4439-bced-181857cb4d0a": {
+      "message_id": "52c141f6-bcc3-4439-bced-181857cb4d0a",
+      "content": {
+        "task": "lp_normal"
+      },
+      "priority": 2,
+      "queue_name": "lp_test",
+      "deduplication_id": null,
+      "group_id": null,
+      "created_at": "2025-09-17T01:24:23.120738",
+      "scheduled_at": null,
+      "retry_count": 0,
+      "max_retries": 3,
+      "timeout_seconds": 300,
+      "status": "pending",
+      "last_error": null,
+      "processing_started_at": null
+    }
+  },
+  "pending_queues": {
+    "LOW": [
+      "a56fc399-fcec-4fe0-9041-fd005bc05550"
+    ],
+    "HIGH": [
+      "e3eaaa1e-2adb-41da-a45b-8397afeb2d78"
+    ],
+    "NORMAL": [
+      "52c141f6-bcc3-4439-bced-181857cb4d0a"
+    ],
+    "CRITICAL": []
+  },
+  "group_queues": {},
+  "group_processing": {},
+  "dedup_cache": {},
+  "dedup_ttl": {},
+  "saved_at": "2025-09-17T01:24:23.120783"
+}

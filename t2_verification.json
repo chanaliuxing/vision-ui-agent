@@ -1,0 +1,6 @@
+{
+  "expect_text_any": [],
+  "expect_absent": [],
+  "timeout_ms": 5000,
+  "post_delay_ms": 300
+}

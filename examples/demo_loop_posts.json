@@ -1,0 +1,37 @@
+{
+  "name": "Demo Loop Posts",
+  "start": "open_and_extract",
+  "vars": { "idx": 0 },
+  "states": {
+    "open_and_extract": {
+      "actions": [
+        { "do": "ext.open_url", "url": "https://example.com/list" },
+        { "do": "wait_until", "check": { "type": "dom", "selector": ".post-item" }, "timeout_ms": 5000 },
+        { "do": "ext.extract", "query": { "posts": "CSS:.post-item" }, "save": "posts" },
+        { "do": "get_list_length", "from": "@posts", "save": "total" }
+      ],
+      "transitions": [{ "go_to": "loop" }]
+    },
+    "loop": {
+      "actions": [
+        { "do": "branch", "if": "idx >= total", "then": "done", "else": "open_post" }
+      ],
+      "transitions": [
+        { "if": "idx >= total", "go_to": "done" },
+        { "go_to": "open_post" }
+      ]
+    },
+    "open_post": {
+      "actions": [
+        { "do": "get_list_item", "from": "@posts", "index": "@idx", "save": "cur" },
+        { "do": "query_data", "from": "@cur", "query": "bbox", "save": "bbox" },
+        { "do": "click_coordinates", "bbox": "@bbox" },
+        { "do": "wait_until", "check": { "type": "dom", "selector": ".detail" }, "timeout_ms": 4000 },
+        { "do": "ext.go_back" },
+        { "do": "increment_variable", "name": "idx" }
+      ],
+      "transitions": [{ "go_to": "loop" }]
+    },
+    "done": { "actions": [] }
+  }
+}

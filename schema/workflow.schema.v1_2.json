@@ -1,0 +1,995 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schema/workflow.v1_2.schema.json",
+  "title": "Hybrid Workflow Schema v1.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["start", "states"],
+  "properties": {
+    "version": { "type": ["string","number"] },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "start": { "type": "string", "minLength": 1 },
+    "vars":  { "type": "object", "additionalProperties": true },
+    "llm_provider": { "type": "string", "enum": ["gemini", "openai", "deepseek", "nvidia"] },
+    "llm_model": { "type": "string" },
+    "context": { "type": "object", "additionalProperties": true },
+    "metadata": { "type": "object", "additionalProperties": true },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "priority": { "type": "string", "enum": ["LOW","HIGH"] },
+        "resource_lock": { "type": "string" }
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "planner": { "type": "boolean", "default": false },
+        "humanize": {
+          "type": "object",
+          "properties": {
+            "mouse": { "type": "boolean", "default": true },
+            "typing": { "type": "boolean", "default": true }
+          }
+        }
+      }
+    },
+    "states": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/state" }
+    }
+  },
+
+  "$defs": {
+    "state": {
+      "type": "object",
+      "required": ["actions"],
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "vars": { "type": "object", "additionalProperties": true },
+        "actions": {
+          "type": "array",
+          "minItems": 0,
+          "items": { "$ref": "#/$defs/action" }
+        },
+        "transitions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transition" }
+        },
+        "on_success": { "type": ["string","null"] },
+        "next": { "type": ["string","null"] },
+        "on_error":   { "type": ["string","null"] },
+        "state_timeout_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "if":   { "type": "string" },
+        "go_to":{ "type": "string" },
+        "else_go_to": { "type": "string" }
+      },
+      "oneOf": [
+        { "required": ["if","go_to"] },
+        { "required": ["else_go_to"] },
+        { "required": ["go_to"] }
+      ]
+    },
+
+    "common_action": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "trace_tag": { "type": "string" },
+        "guard": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "allowlist": { "type": "array", "items": { "type": "string" } },
+            "denylist":  { "type": "array", "items": { "type": "string" } },
+            "source_vars_only": { "type": "boolean", "default": false }
+          }
+        },
+        "save": {
+          "anyOf": [
+            { "type": "string" },
+            { "$ref": "#/$defs/save_block" }
+          ]
+        },
+        "save_as":  { "type": "string" },
+        "save_to":  { "type": "string" },
+        "timeout_ms": { "type": "integer", "minimum": 0 },
+        "retry": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "attempts": { "type": "integer", "minimum": 1 },
+            "base_ms":  { "type": "integer", "minimum": 0 },
+            "max_ms":   { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+
+    "action": {
+      "type": "object",
+      "oneOf": [
+        { "$ref": "#/$defs/a.open_url" },
+        { "$ref": "#/$defs/a.sleep_ms" },
+        { "$ref": "#/$defs/a.screenshot" },
+        { "$ref": "#/$defs/a.wait_for" },
+        { "$ref": "#/$defs/a.detect" },
+        { "$ref": "#/$defs/a.locate" },
+        { "$ref": "#/$defs/a.click" },
+        { "$ref": "#/$defs/a.type_text" },
+        { "$ref": "#/$defs/a.scroll" },
+        { "$ref": "#/$defs/a.go_back" },
+        { "$ref": "#/$defs/a.autostep" },
+        { "$ref": "#/$defs/a.decide_with_gemini" },
+        { "$ref": "#/$defs/a.ext.open_url" },
+        { "$ref": "#/$defs/a.ext.click_selector" },
+        { "$ref": "#/$defs/a.ext.type_text" },
+        { "$ref": "#/$defs/a.ext.key" },
+        { "$ref": "#/$defs/a.ext.scroll" },
+        { "$ref": "#/$defs/a.ext.extract" },
+        { "$ref": "#/$defs/a.set_variable" },
+        { "$ref": "#/$defs/a.increment_variable" },
+        { "$ref": "#/$defs/a.get_list_length" },
+        { "$ref": "#/$defs/a.get_list_item" },
+        { "$ref": "#/$defs/a.query_data" },
+        { "$ref": "#/$defs/a.click_coordinates" },
+        { "$ref": "#/$defs/a.wheel_coordinates" },
+        { "$ref": "#/$defs/a.mq.consume" },
+        { "$ref": "#/$defs/a.mq.ack" },
+        { "$ref": "#/$defs/a.mq.publish" },
+        { "$ref": "#/$defs/a.ocr.run" },
+        { "$ref": "#/$defs/a.chat.find_unread" },
+        { "$ref": "#/$defs/a.chat.open_latest_unread" },
+        { "$ref": "#/$defs/a.chat.capture_visible" },
+        { "$ref": "#/$defs/a.chat.focus_contact" },
+        { "$ref": "#/$defs/a.chat.send_text" },
+        { "$ref": "#/$defs/a.llm.submit" },
+        { "$ref": "#/$defs/a.plan.execute" },
+        { "$ref": "#/$defs/a.branch" },
+        { "$ref": "#/$defs/a.log" },
+        { "$ref": "#/$defs/a.wait" },
+        { "$ref": "#/$defs/a.register_service" },
+        { "$ref": "#/$defs/a.queue_high_priority" },
+        { "$ref": "#/$defs/a.queue_low_priority" },
+        { "$ref": "#/$defs/a.llm_decide" },
+        { "$ref": "#/$defs/a.yolo_detect" },
+        { "$ref": "#/$defs/a.create_checkpoint" },
+        { "$ref": "#/$defs/a.authenticate" },
+        { "$ref": "#/$defs/a.secure_operation" },
+        { "$ref": "#/$defs/a.human_like_delay" },
+        { "$ref": "#/$defs/a.randomize_mouse_path" },
+        { "$ref": "#/$defs/a.circuit_breaker_test" },
+        { "$ref": "#/$defs/a.self_healing_check" },
+        { "$ref": "#/$defs/a.platform_detect" },
+        { "$ref": "#/$defs/a.system_diagnostics" },
+        { "$ref": "#/$defs/a.conditional" },
+        { "$ref": "#/$defs/a.desktop_automation" },
+        { "$ref": "#/$defs/a.mobile_automation" },
+        { "$ref": "#/$defs/a.start_remote_session" },
+        { "$ref": "#/$defs/a.stream_screen" },
+        { "$ref": "#/$defs/a.stop_remote_session" },
+        { "$ref": "#/$defs/a.mock_service_setup" },
+        { "$ref": "#/$defs/a.run_integration_test" },
+        { "$ref": "#/$defs/a.chaos_experiment" },
+        { "$ref": "#/$defs/a.validate_recovery" },
+        { "$ref": "#/$defs/a.generate_report" },
+        { "$ref": "#/$defs/a.calculate_duration" },
+        { "$ref": "#/$defs/a.error_analysis" },
+        { "$ref": "#/$defs/a.self_healing_attempt" },
+        { "$ref": "#/$defs/a.resume_from_checkpoint" },
+        { "$ref": "#/$defs/a.graceful_shutdown" },
+        { "$ref": "#/$defs/a.ocr_extract" },
+        { "$ref": "#/$defs/a.text_analysis" }
+      ]
+    },
+
+    "a.open_url": {
+      "allOf":[
+        { "type": "object", "additionalProperties": false,
+          "properties": {
+            "do": { "const": "open_url" },
+            "url": { "type": "string", "minLength": 1 },
+            "app": { "type": "string" }
+          },
+          "required": ["do","url"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.sleep_ms": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": { "do": { "const":"sleep_ms" }, "value": { "type":"integer","minimum":0 } },
+          "required": ["do","value"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.screenshot": {
+      "allOf":[
+        { "type":"object", "additionalProperties": true,
+          "properties": { "do": { "const":"screenshot" } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "wait_condition": {
+      "type":"object",
+      "additionalProperties": true,
+      "properties": {
+        "type": { "type":"string", "description":"yolo_appear | spinner_disappear | sleep_ms | ext.wait_quiet" },
+        "value": { "type":["integer","string"] },
+        "any_of": { "type":"array", "items": { "type":"string" } },
+        "rules": { "type":"array", "items": { "type":"string" } },
+        "timeout_ms": { "type":"integer","minimum":0 },
+        "poll_ms": { "type":"integer","minimum":0 },
+        "url": { "type":"string" }
+      }
+    },
+
+    "a.wait_for": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": { "do": { "const":"wait_for" }, "until": { "$ref":"#/$defs/wait_condition" } },
+          "required": ["do","until"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.detect": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": {
+            "do": { "const":"detect" },
+            "return_image": { "type":"boolean" },
+            "save_json": { "type":"string" },
+            "save_server_image_as": { "type":"string" },
+            "save_overlay": { "type":"string" }
+          },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.locate": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": {
+            "do": { "const":"locate" },
+            "targets": { "type":"array", "items":{"type":"string"} },
+            "candidates": { "type":"array", "items":{"type":"string"} },
+            "verify": { "$ref":"#/$defs/wait_condition" }
+          },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.click": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false, "properties": { "do": { "const":"click" } }, "required": ["do"] },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.type_text": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": {
+            "do": { "const":"type_text" },
+            "text": { "type":"string" },
+            "mode": { "type":"string", "enum":["auto","type","paste"] }
+          },
+          "required": ["do","text"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.scroll": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": { "do": { "const":"scroll" }, "clicks": { "type":"integer" } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.go_back": {
+      "allOf":[
+        { "type":"object", "additionalProperties": false,
+          "properties": { "do": { "const":"go_back" } }, "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "verify_block": {
+      "type":"object", "additionalProperties": false,
+      "properties": {
+        "timeout_ms": { "type":"integer","minimum":0 },
+        "poll_ms": { "type":"integer","minimum":0 },
+        "rules": { "type":"array","items":{"type":"string"} }
+      }
+    },
+    "fallback_block": {
+      "type":"object","additionalProperties": false,
+      "properties": { "action": { "type":"string","enum":["scroll"] }, "clicks": { "type":"integer" } },
+      "required": ["action"]
+    },
+    "save_block": {
+      "type":"object", "additionalProperties": false,
+      "properties": {
+        "shot": { "type":"string" },
+        "yolo": { "type":"string" },
+        "picker": { "type":"string" },
+        "overlay": { "type":"string" },
+        "json": { "type":"string" }
+      }
+    },
+
+    "a.autostep": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"autostep" },
+            "goal": { "type":"string", "minLength": 1 },
+            "intent": { "type":"string" },
+            "picker": { "type":"string","enum":["vision"] },
+            "executor": { "type":"string","enum":["vision","dom","dom+coords"] },
+            "pop": { "type":["string","boolean"], "enum":["auto", true, false] },
+            "phase": { "type":"string" },
+            "task_context": { "type":"string" },
+            "k": { "type":"integer","minimum":1,"maximum":100 },
+            "hints": { "type":"array","items":{"type":"string"} },
+            "preferred_classes": { "type":"array","items":{"type":"string"} },
+            "negative_classes": { "type":"array","items":{"type":"string"} },
+            "verify": {
+              "anyOf": [
+                { "$ref":"#/$defs/verify_block" },
+                { "type": "string" }
+              ]
+            },
+            "fallback": { "$ref":"#/$defs/fallback_block" },
+            "save": { "$ref":"#/$defs/save_block" },
+            "args": { "type":"object","additionalProperties": true },
+            "max_attempts": { "type":"integer","minimum":1 }
+          },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.decide_with_gemini": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"decide_with_gemini" },
+            "goal": { "type":"string","minLength":1 },
+            "image": { "type":"string" },
+            "yolo_json": { "type":"string" },
+            "save": { "type":"string" }
+          },
+          "required": ["do","goal"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.ext.open_url": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"ext.open_url" }, "url": { "type":"string" }, "active": { "type":"boolean" } },
+          "required": ["do","url"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.ext.click_selector": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"ext.click_selector" }, "sel": { "type":"string","minLength":1 } },
+          "required": ["do","sel"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.ext.type_text": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"ext.type_text" }, "sel": { "type":"string" }, "text": { "type":"string" }, "replace": { "type":"boolean" } },
+          "required": ["do","sel","text"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.ext.key": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"ext.key" }, "key": { "type":"string" } },
+          "required": ["do","key"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.ext.scroll": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"ext.scroll" }, "dir": { "type":"string","enum":["up","down"] }, "amount": { "type":"integer" } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.ext.extract": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"ext.extract" }, "args": { "type":"object","additionalProperties": true } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.set_variable": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"set_variable" }, "name": { "type":"string" }, "value": {} },
+          "required": ["do","name"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.increment_variable": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"increment_variable" }, "name": { "type":"string" } },
+          "required": ["do","name"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.get_list_length": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"get_list_length" }, "from": {}, "save": { "type":"string" } },
+          "required": ["do","from","save"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.get_list_item": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"get_list_item" }, "from": {}, "index": {}, "save": { "type":"string" } },
+          "required": ["do","from","index","save"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.query_data": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"query_data" }, "from": {}, "query": { "type":"string" }, "save": { "type":"string" } },
+          "required": ["do","from","query","save"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.click_coordinates": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"click_coordinates" }, "bbox": {} },
+          "required": ["do","bbox"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.wheel_coordinates": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"wheel_coordinates" },
+            "at_bbox": {},
+            "amount": { "type":"integer" }
+          },
+          "required": ["do","at_bbox","amount"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.mq.consume": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"mq.consume" },
+            "topic": { "type":"string" },
+            "visibility_timeout_ms": { "type":"integer","minimum":0 }
+          },
+          "required": ["do","topic"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.mq.ack": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"mq.ack" }, "topic": { "type":"string" }, "from_var": { "type":"string" } },
+          "required": ["do","topic","from_var"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.mq.publish": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"mq.publish" }, "topic": { "type":"string" }, "payload": {} },
+          "required": ["do","topic"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.ocr.run": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"ocr.run" },
+            "roi": {},
+            "lang": { "type":"string" },
+            "psm": { "type":"integer" },
+            "cache": { "type":"boolean" }
+          },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.chat.find_unread": {
+      "allOf":[
+        { "type":"object","additionalProperties": false, "properties": { "do": { "const":"chat.find_unread" } }, "required": ["do"] },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.chat.open_latest_unread": {
+      "allOf":[
+        { "type":"object","additionalProperties": false, "properties": { "do": { "const":"chat.open_latest_unread" } }, "required": ["do"] },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.chat.capture_visible": {
+      "allOf":[
+        { "type":"object","additionalProperties": false, "properties": { "do": { "const":"chat.capture_visible" } }, "required": ["do"] },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.chat.focus_contact": {
+      "allOf":[
+        { "type":"object","additionalProperties": false, "properties": { "do": { "const":"chat.focus_contact" }, "name": {} }, "required": ["do","name"] },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+    "a.chat.send_text": {
+      "allOf":[
+        { "type":"object","additionalProperties": false, "properties": { "do": { "const":"chat.send_text" }, "text": {} }, "required": ["do","text"] },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.llm.submit": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"llm.submit" },
+            "job": { "type":"string" },
+            "prompt_pack": { "type":"string" },
+            "schema": { "type":"string" },
+            "provider_hint": { "type":"string" },
+            "inputs": { "type":"object","additionalProperties": true },
+            "timeout_ms": { "type":"integer","minimum":0 }
+          },
+          "required": ["do","job","prompt_pack","schema","inputs"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.plan.execute": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": {
+            "do": { "const":"plan.execute" },
+            "plan": {},
+            "policy": {
+              "type":"object",
+              "properties": {
+                "max_steps": { "type":"integer","minimum":1 },
+                "max_runtime_ms": { "type":"integer","minimum":1 },
+                "per_step_timeout_ms": { "type":"integer","minimum":1 },
+                "deny": { "type":"array", "items": { "type":"string" } },
+                "allow": { "type":"array", "items": { "type":"string" } }
+              }
+            }
+          },
+          "required": ["do","plan"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.branch": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"branch" }, "if": { "type":"string" }, "then": { "type":"string" }, "else": { "type":"string" } },
+          "required": ["do","if"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.log": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"log" }, "message": { "type":"string" }, "level": { "type":"string", "enum":["debug","info","warn","error"] } },
+          "required": ["do","message"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.wait": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"wait" }, "seconds": { "type":"number","minimum":0 } },
+          "required": ["do","seconds"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.register_service": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"register_service" }, "service_name": { "type":"string" }, "service_type": { "type":"string" } },
+          "required": ["do","service_name","service_type"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.queue_high_priority": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"queue_high_priority" }, "queue_name": { "type":"string" }, "message": {} },
+          "required": ["do","queue_name","message"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.queue_low_priority": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"queue_low_priority" }, "queue_name": { "type":"string" }, "message": {} },
+          "required": ["do","queue_name","message"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.llm_decide": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"llm_decide" }, "args": { "type":"object","additionalProperties":true } },
+          "required": ["do","args"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.yolo_detect": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"yolo_detect" }, "image_path": { "type":"string" }, "confidence": { "type":"number","minimum":0,"maximum":1 } },
+          "required": ["do","image_path"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.create_checkpoint": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"create_checkpoint" }, "checkpoint_id": { "type":"string" }, "state_data": { "type":"object","additionalProperties":true } },
+          "required": ["do","checkpoint_id"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.authenticate": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"authenticate" }, "method": { "type":"string" }, "credentials": { "type":"object","additionalProperties":true } },
+          "required": ["do","method","credentials"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.secure_operation": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"secure_operation" }, "operation": { "type":"string" }, "token": { "type":"string" }, "permissions": { "type":"array","items":{"type":"string"} } },
+          "required": ["do","operation"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.human_like_delay": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"human_like_delay" }, "min_ms": { "type":"integer","minimum":0 }, "max_ms": { "type":"integer","minimum":0 }, "distribution": { "type":"string","enum":["normal","uniform"] } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.randomize_mouse_path": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"randomize_mouse_path" }, "enable": { "type":"boolean" }, "noise_level": { "type":"number","minimum":0,"maximum":1 } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.circuit_breaker_test": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"circuit_breaker_test" }, "service": { "type":"string" }, "failure_threshold": { "type":"integer","minimum":1 }, "timeout_ms": { "type":"integer","minimum":0 } },
+          "required": ["do","service"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.self_healing_check": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"self_healing_check" }, "components": { "type":"array","items":{"type":"string"} } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.platform_detect": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"platform_detect" } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.system_diagnostics": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"system_diagnostics" }, "check": { "type":"array","items":{"type":"string"} } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.conditional": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"conditional" }, "condition": { "type":"string" }, "actions": { "type":"array","items":{"$ref":"#/$defs/action"} }, "else_actions": { "type":"array","items":{"$ref":"#/$defs/action"} } },
+          "required": ["do","condition","actions"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.desktop_automation": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"desktop_automation" }, "action": { "type":"string" } },
+          "required": ["do","action"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.mobile_automation": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"mobile_automation" }, "action": { "type":"string" } },
+          "required": ["do","action"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.start_remote_session": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"start_remote_session" }, "session_id": { "type":"string" }, "permissions": { "type":"array","items":{"type":"string"} } },
+          "required": ["do","session_id"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.stream_screen": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"stream_screen" }, "session_id": { "type":"string" }, "fps": { "type":"integer","minimum":1 }, "duration_seconds": { "type":"integer","minimum":1 } },
+          "required": ["do","session_id"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.stop_remote_session": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"stop_remote_session" }, "session_id": { "type":"string" } },
+          "required": ["do","session_id"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.mock_service_setup": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"mock_service_setup" }, "services": { "type":"array","items":{"type":"string"} }, "mode": { "type":"string" } },
+          "required": ["do","services"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.run_integration_test": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"run_integration_test" }, "test_suite": { "type":"string" } },
+          "required": ["do","test_suite"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.chaos_experiment": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"chaos_experiment" }, "experiment": { "type":"object","additionalProperties":true } },
+          "required": ["do","experiment"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.validate_recovery": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"validate_recovery" }, "expected_recovery_time": { "type":"integer","minimum":0 } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.generate_report": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"generate_report" }, "report_type": { "type":"string" }, "include": { "type":"array","items":{"type":"string"} }, "save_to": { "type":"string" } },
+          "required": ["do","report_type"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.calculate_duration": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"calculate_duration" }, "start_time": { "type":"string" }, "end_time": { "type":"string" } },
+          "required": ["do","start_time","end_time"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.error_analysis": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"error_analysis" } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.self_healing_attempt": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"self_healing_attempt" }, "max_attempts": { "type":"integer","minimum":1 } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.resume_from_checkpoint": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"resume_from_checkpoint" }, "checkpoint_id": { "type":"string" } },
+          "required": ["do","checkpoint_id"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.graceful_shutdown": {
+      "allOf":[
+        { "type":"object","additionalProperties": false,
+          "properties": { "do": { "const":"graceful_shutdown" }, "reason": { "type":"string" } },
+          "required": ["do"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.ocr_extract": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"ocr_extract" }, "image_path": { "type":"string" }, "method": { "type":"string","enum":["tesseract","paddleocr","easyocr"] } },
+          "required": ["do","image_path"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    },
+
+    "a.text_analysis": {
+      "allOf":[
+        { "type":"object","additionalProperties": true,
+          "properties": { "do": { "const":"text_analysis" }, "text": { "type":"string" }, "find_patterns": { "type":"array","items":{"type":"string"} } },
+          "required": ["do","text"]
+        },
+        { "$ref": "#/$defs/common_action" }
+      ]
+    }
+  }
+}

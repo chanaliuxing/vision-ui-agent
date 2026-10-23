@@ -1,0 +1,30 @@
+{
+  "name": "Integration Test Workflow",
+  "description": "Simple workflow for integration testing",
+  "start": "init",
+  "llm_provider": "gemini",
+  "llm_model": "gemini-1.5-flash",
+  "states": {
+    "init": {
+      "actions": [
+        {
+          "do": "wait",
+          "seconds": 0.5
+        }
+      ],
+      "next": "capture"
+    },
+    "capture": {
+      "actions": [
+        {
+          "do": "screenshot",
+          "save_to": "out/screens/integration_test.png"
+        }
+      ],
+      "next": "end"
+    },
+    "end": {
+      "actions": []
+    }
+  }
+}

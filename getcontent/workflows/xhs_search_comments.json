@@ -1,0 +1,113 @@
+{
+  "name": "xhs_search_and_comments",
+  "description": "Search XHS for specific term and scrape comments from the 3rd post",
+  "start": "main",
+  "version": "1.0",
+  "states": {
+    "main": {
+      "description": "Main execution flow for XHS comment scraping",
+      "actions": [
+        {
+          "do": "open_url",
+          "args": {
+            "url": "https://www.xiaohongshu.com/explore"
+          },
+          "description": "Navigate to XHS explore page"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "input[type=search],input[placeholder*='搜索'],input[placeholder*='search'],.search-input input"
+          },
+          "verify": {
+            "timeout_ms": 8000,
+            "rules": ["dom_count>=1"]
+          },
+          "description": "Wait for search input to be available"
+        },
+        {
+          "do": "type",
+          "args": {
+            "selector": "input[type=search],input[placeholder*='搜索'],input[placeholder*='search'],.search-input input",
+            "text": "海边穿搭",
+            "enter": true,
+            "clear": true
+          },
+          "fallback": {
+            "vision_click": {
+              "label": "search_box"
+            }
+          },
+          "description": "Type search term and submit"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "[data-note-id], a[href*='/explore/'], .note-item, [class*='note']"
+          },
+          "verify": {
+            "timeout_ms": 12000,
+            "rules": ["dom_count>=8"]
+          },
+          "description": "Wait for search results to load"
+        },
+        {
+          "do": "open_nth_item",
+          "args": {
+            "list_selector": "[data-note-id], a[href*='/explore/'], .note-item, [class*='note']",
+            "index": 3
+          },
+          "fallback": {
+            "vision_click": {
+              "label": "post_card"
+            }
+          },
+          "description": "Open the 3rd search result post"
+        },
+        {
+          "do": "wait_for",
+          "args": {
+            "selector": "[class*='comment'], [data-comment-id], .comment, section:has([class*='comment'])"
+          },
+          "verify": {
+            "timeout_ms": 15000,
+            "rules": ["dom_count>=1"]
+          },
+          "description": "Wait for post page and comments to load"
+        },
+        {
+          "do": "scrape_comments",
+          "args": {
+            "container": "body",
+            "max_scrolls": 30,
+            "scroll_pause_ms": 800,
+            "comment_selectors": [
+              "[class*='comment'] *",
+              "[data-comment-id] *",
+              ".comment *",
+              "section:has([class*='comment']) *",
+              "[class*='Content'] p",
+              "[class*='text'] span",
+              "[class*='CommentItem'] *"
+            ]
+          },
+          "description": "Scrape all comments from the post"
+        },
+        {
+          "do": "save_text",
+          "args": {
+            "path": "xhs/海边穿搭_第3帖_评论.txt"
+          },
+          "description": "Save scraped comments to artifact"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "created_at": "2025-01-15",
+    "target_sites": ["xiaohongshu.com"],
+    "expected_artifacts": ["xhs/海边穿搭_第3帖_评论.txt"],
+    "estimated_duration_seconds": 120,
+    "requires_vision_fallback": true
+  }
+}

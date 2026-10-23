@@ -1,0 +1,35 @@
+{
+  "name": "LP Poller (SQS -> LLM)",
+  "meta": { "priority": "LOW" },
+  "start": "poll",
+  "vars": { "tick": 0, "device_id": "demo" },
+  "states": {
+    "poll": {
+      "actions": [
+        { "do": "demo.fake_red_dot", "save": "rd" },
+        { "do": "branch", "if": "rd['has_red'] == True", "then": "submit_llm", "else": "sleep" }
+      ],
+      "transitions": [
+        { "if": "rd['has_red'] == True", "go_to": "submit_llm" },
+        { "go_to": "sleep" }
+      ]
+    },
+    "sleep": {
+      "actions": [ { "do": "set_variable", "name": "noop", "value": 0 } ],
+      "transitions": [ { "go_to": "poll" } ]
+    },
+    "submit_llm": {
+      "actions": [
+        {
+          "do": "llm.submit",
+          "job": "wechat_reply",
+          "prompt_pack": "wechat.sales.reply.v1",
+          "schema": "WeChatReplyV1",
+          "provider_hint": "mock",
+          "inputs": { "new_messages": [ { "contact": "Alice", "text": "在吗？" } ], "history": [] }
+        }
+      ],
+      "transitions": [ { "go_to": "poll" } ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "YOLO+LLM Automation — Auto Runner",
+  "version": "0.2.0",
+  "minimum_chrome_version": "116",
+  "description": "Auto-executes signed plans & tasks with resolver; no secrets inside.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs",
+    "declarativeNetRequest",
+    "debugger",
+    "alarms",
+    "webNavigation",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "*://*.xhs.com/*",
+    "*://*.xiaohongshu.com/*",
+    "*://*.indeed.com/*",
+    "*://*.qq.com/*",
+    "*://wx.qq.com/*",
+    "http://localhost:8787/*",
+    "http://127.0.0.1:8787/*",
+    "http://127.0.0.1:8788/*",
+    "http://localhost:8788/*",
+    "http://127.0.0.1:8789/*",
+    "http://localhost:8789/*"
+  ],
+  "background": { "service_worker": "sw/bootstrap.js", "type": "module" },
+  "action": { "default_popup": "ui/popup.html" },
+  "content_scripts": [
+    {
+      "matches": ["*://*.xiaohongshu.com/*", "*://*.indeed.com/*"],
+      "js": ["cs/actions.js", "cs/extract-bridge.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

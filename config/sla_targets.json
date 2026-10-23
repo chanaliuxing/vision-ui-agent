@@ -1,0 +1,49 @@
+{
+  "sla_targets": [
+    {
+      "name": "workflow_success_rate",
+      "metric_type": "success_rate",
+      "target_value": 0.95,
+      "comparison": ">=",
+      "time_window_minutes": 10,
+      "measurement_interval_seconds": 60,
+      "breach_threshold_count": 3
+    },
+    {
+      "name": "workflow_response_time_p95",
+      "metric_type": "response_time",
+      "target_value": 5000,
+      "comparison": "<=",
+      "time_window_minutes": 5,
+      "measurement_interval_seconds": 60,
+      "breach_threshold_count": 3
+    },
+    {
+      "name": "hp_task_response_time",
+      "metric_type": "response_time",
+      "target_value": 3000,
+      "comparison": "<=",
+      "time_window_minutes": 5,
+      "measurement_interval_seconds": 60,
+      "breach_threshold_count": 3
+    },
+    {
+      "name": "error_rate",
+      "metric_type": "error_rate",
+      "target_value": 0.05,
+      "comparison": "<=",
+      "time_window_minutes": 10,
+      "measurement_interval_seconds": 60,
+      "breach_threshold_count": 3
+    },
+    {
+      "name": "system_availability",
+      "metric_type": "availability",
+      "target_value": 0.99,
+      "comparison": ">=",
+      "time_window_minutes": 60,
+      "measurement_interval_seconds": 60,
+      "breach_threshold_count": 3
+    }
+  ]
+}

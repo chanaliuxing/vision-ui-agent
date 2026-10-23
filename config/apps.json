@@ -1,0 +1,12 @@
+{
+  "wechat": {
+    "enabled": true,
+    "lang": "chi_sim+eng",
+    "priority": 1
+  },
+  "slack": {
+    "enabled": true,
+    "lang": "eng",
+    "priority": 2
+  }
+}
